@@ -112,8 +112,8 @@ class qtype_essaycosine extends question_type {
       "answerkeyformat"         => $question->answerkey['format'],
       "showtextstats"           => $question->showtextstats,
       "textstatitems"           => $textstatitems,
-      'responsetemplate'        => isset($question->responsetemplate['text']) ? $question->responsetemplate['text'] : '',
-      'responsetemplateformat'  => isset($question->responsetemplate['format']) ? $question->responsetemplate['format'] : 0,
+      "responsetemplate"        => isset($question->responsetemplate['text']) ? $question->responsetemplate['text'] : '',
+      "responsetemplateformat"  => isset($question->responsetemplate['format']) ? $question->responsetemplate['format'] : 0,
     ];
 
     if ($oldquestion) {
@@ -136,16 +136,16 @@ class qtype_essaycosine extends question_type {
     parent::initialise_question_instance($question, $questiondata);
 
     $defaults = self::get_defaults();
-    foreach($defaults as $name => $default) {
-      $question->$name = isset($questiondata->options->$name) ? $questiondata->options->$name :$default;
+    foreach ($defaults as $name => $default) {
+      $question->$name = isset($questiondata->options->$name) ? $questiondata->options->$name : $default;
     }
   }
 
   /**
    * Get default values of the question
    */
-  public static function get_defaults($questionid = false) {
-    $fields = [
+  public static function get_defaults() {
+    return [
       "responseformat"          => 'editor',
       "responserequired"        => 1,
       "responsefieldlines"      => 10,
@@ -166,10 +166,6 @@ class qtype_essaycosine extends question_type {
       "responsetemplate"        => '',
       "responsetemplateformat"  => 0
     ];
-
-    if ($questionid) $fields['questionid'] = $questionid;
-
-    return $fields;
   }
 
   public function move_files($questionid, $oldcontextid, $newcontextid) {

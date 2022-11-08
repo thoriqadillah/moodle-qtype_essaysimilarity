@@ -43,91 +43,84 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
   /** Number of rows in TEXTAREA elements */
   const TEXTAREA_ROWS = 5;
 
-  public function definition_inner($mform) {
-    global $PAGE;
-
+  protected function definition_inner($mform) {
     parent::definition_inner($mform);
 
     $plugin = $this->plugin_name();
-    $dropdown_options = $this->dropdown_options();
-
-    // add Javascript to expand/contract text input fields
-    $PAGE->requires->js_call_amd("$plugin/form", 'init', []);
 
     /////////////////////////////////////////////////
     // add plugin main form elements               //
     /////////////////////////////////////////////////
-    $name = 'autograding';
-    $label = get_string($name, $plugin);
-    $mform->addElement('header', $name, $label);
-    $mform->setExpanded($name, true);
+    $header_name = 'autograding';
+    $header_label = get_string($header_name, $plugin);
+    $mform->addElement('header', $header_name, $header_label);
+    $mform->setExpanded($header_name, true);
 
     $name = 'enableautograde';
     $label = get_string($name, $plugin);
     $mform->addElement('selectyesno', $name, $label);
-    $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
-    $mform->setDefault($name, $this->default($name, 1));
+    $mform->setDefault($name, $this->get_default($name, 1));
+    $mform->addHelpButton($name, $name, $plugin);
 
     $name = 'answerkey';
     $label = get_string($name, $plugin);
     $mform->addElement('editor', $name, $label, [], $this->editoroptions);
     $mform->addHelpButton($name, $name, $plugin);
+    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'showfeedback';
     $label = get_string($name, $plugin);
-    $mform->addElement('select', $name, $label, $dropdown_options);
+    $mform->addElement('select', $name, $label, $this->dropdown_options());
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
-    $mform->setDefault($name, $this->default($name, $this->constant('SHOW_TEACHERS_AND_STUDENTS')));
+    $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_TEACHERS_AND_STUDENTS')));
     $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'showtextstats';
     $label = get_string($name, $plugin);
-    $mform->addElement('select', $name, $label, $dropdown_options);
+    $mform->addElement('select', $name, $label, $this->dropdown_options());
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
-    $mform->setDefault($name, $this->default($name, $this->constant('SHOW_TEACHERS_ONLY')));
+    $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_TEACHERS_ONLY')));
     $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'textstatitems';
     $label = get_string($name, $plugin);
-    $elements = [];
-    foreach($this->textstatitems_options() as $value => $text) {
-      $elements[] = $mform->createElement('checkbox', $name."[$value]",  '', $text);
+    $options = $this->textstatitems_options();
+    $elements = array();
+    foreach ($options as $value => $text) {
+        $elements[] = $mform->createElement('checkbox', $name."[$value]",  '', $text);
     }
     $mform->addGroup($elements, $name, $label, html_writer::empty_tag('br'), false);
     $mform->addHelpButton($name, $name, $plugin);
     $mform->disabledIf($name, 'enableautograde', 'eq', 0);
-    $mform->disabledIf($name, 'showtextstats', 'eq', $this->constant('SHOW_NONE'));
+    $mform->disabledIf($name, 'showtextstats', 'eq', $this->get_constant('SHOW_NONE'));
 
-    foreach($this->textstatitems_options() as $value => $text) {
+    foreach ($options as $value => $text) {
       $mform->setType($name."[$value]", PARAM_INT);
     }
 
-    // collapse certain form sections
-    $sections = [
-      'responseoptions',
-      'responsetemplateheader',
-      'graderinfoheader',
-    ];
+    // set this options to be collapsed
+    $sections = ['responseoptions', 'responsetemplateheader', 'graderinfoheader'];
     foreach ($sections as $section) {
       if ($mform->elementExists($section)) {
         $mform->setExpanded($section, false);
       }
     }
 
-    // reduce vertical height of textareas
-    $names = [
+    // set these section textarea height 
+    $sections = [
       'questiontext',
+      'answerkey',
       'generalfeedback',
       'responsetemplate',
-      'answerkey',
+      'responsesample',
       'graderinfo'
     ];
-    foreach ($names as $name) {
-      if ($mform->elementExists($name)) {
-        $element = $mform->getElement($name);
+    foreach ($sections as $section) {
+      if ($mform->elementExists($section)) {
+        $element = $mform->getElement($section);
         $attributes = $element->getAttributes();
         $attributes['rows'] = self::TEXTAREA_ROWS;
         $element->setAttributes($attributes);
@@ -151,108 +144,107 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
     }
   }
 
-  protected function data_processing($question) {
+  protected function data_preprocessing($question) {
     $question = parent::data_preprocessing($question);
+    if (empty($question->options)) return $question;
 
-    if (empty($question)) return $question;
-
-    /////////////////////////////////////////////////////////////////////////
-    // initialize initial value for plugin form when making new question   //
-    /////////////////////////////////////////////////////////////////////////
-
-    // initialize for numeric value
+    // Initialize fields that has numeric value.
     $question->enableautograde = $question->options->enableautograde;
     $question->showfeedback = $question->options->showfeedback;
     $question->showtextstats = $question->options->showtextstats;
 
-    // initialize HTML text field
-    if (!isset($question->options->answerkey) || !isset($question->options->answerkeyformat)) {
-      $question->options->answerkey = '';
-      $question->options->answerkeyformat = FORMAT_HTML;
-    }
-
+    // Initialize fields that has HTML editor value.
     $question->answerkey = [
       'text' => $question->options->answerkey,
       'format' => $question->options->answerkeyformat
     ];
 
-    // initialize statistical item (a comma delimited list)
-    if (! isset($question->options->textstatitems)) {
+    $question->responsetemplate = [
+      'text' => $question->options->responsetemplate,
+      'format' => $question->options->responsetemplateformat
+    ];
+
+    // Initialize textstatitems (a comma delimited list)
+    if (!isset($question->options->textstatitems)) {
       $question->options->textstatitems = '';
     }
-
     $question->textstatitems = $question->options->textstatitems;
     $question->textstatitems = explode(',', $question->textstatitems);
     $question->textstatitems = array_flip($question->textstatitems);
-    foreach ($this->textstatitems_options() as $value) {
+    foreach ($this->textstatitems_options(false) as $value) {
       $question->textstatitems[$value] = array_key_exists($value, $question->textstatitems);
     }
+
+    return $question;
   }
 
   /**
-   * Get array of show/hide options
-   *
-   * @return array [type => description]
+   * Dropdown option for select form type for show/hide 
    */
-  public function dropdown_options() {
+  private function dropdown_options() {
     $plugin = $this->plugin_name();
 
     return [
-      $this->constant('SHOW_NONE')                  => get_string('no'),
-      $this->constant('SHOW_STUDENTS_ONLY')         => get_string('showtostudentsonly', $plugin),
-      $this->constant('SHOW_TEACHERS_ONLY')         => get_string('showtoteachersonly', $plugin),
-      $this->constant('SHOW_TEACHERS_AND_STUDENTS') => get_string('showtoteachersandstudents', $plugin)
+      $this->get_constant('SHOW_NONE')                  => get_string('no', $plugin),
+      $this->get_constant('SHOW_STUDENTS_ONLY')         => get_string('showtostudentsonly', $plugin),
+      $this->get_constant('SHOW_TEACHERS_ONLY')         => get_string('showtoteachersonly', $plugin),
+      $this->get_constant('SHOW_TEACHERS_AND_STUDENTS') => get_string('showtoteachersandstudents', $plugin)
     ];
-  } 
+  }
+
+  /**
+   * Return default value of an item
+   * 
+   * @param string $name Item name
+   * @param string|mixed|null $default Default value
+   */
+  private function get_default($name, $value) {
+    if (method_exists($this, 'get_default_value')) {
+      return $this->get_default_value($name, $value); //for Moodle >= v3.10
+    }
+
+    $item_name = $this->plugin_name().''.$name;
+    return get_user_preferences($item_name, $value); //for Moodle <= v3.9
+  }
 
   /**
    * Get array of countable statistical item
    *
-   * @return array(type => description)
+   * @return array [type => description]
    */
-  function textstatitems_options() {
+  private function textstatitems_options($returntext = true) {
     $plugin = $this->plugin_name();
 
     $options = [
-      'chars'                  => get_string('chars' , $plugin),
-      'words'                  => get_string('words' , $plugin),
-      'sentences'              => get_string('sentences' , $plugin),
-      'paragraphs'             => get_string('paragraphs' , $plugin),
-      'uniquewords'            => get_string('uniquewords' , $plugin),
-      'longwords'              => get_string('longwords' , $plugin),
-      'charspersentence'       => get_string('charspersentence' , $plugin),
-      'wordspersentence'       => get_string('wordspersentence' , $plugin),
-      'longwordspersentence'   => get_string('longwordspersentence' , $plugin),
-      'sentencesperparagraph'  => get_string('sentencesperparagraph' , $plugin),
-      'lexicaldensity'         => get_string('lexicaldensity' , $plugin),
-      'fogindex'               => get_string('fogindex' , $plugin),
+      'chars',
+      'words',
+      'sentences',
+      'paragraphs',
+      'uniquewords',
+      'longwords',
+      'charspersentence',
+      'wordspersentence',
+      'longwordspersentence',
+      'sentencesperparagraph',
+      'lexicaldensity',
+      'fogindex',
     ];
+
+    if ($returntext) {
+      $options = array_flip($options);
+      foreach (array_keys($options) as $option) {
+        $options[$option] = get_string($option, $plugin);
+      }
+    }
     
     return $options;
   }
 
   /**
-   * Returns default value for item
-   *
-   * @param string $name Item name
-   * @param string|mixed|null $value Default value (optional, default = null)
-   * @return string|mixed|null Default value for field with this $name
+   * Fetch a constant attribute of qtype_essaycosine class inside "questiontype.php" file.
    */
-  public function default($name, $value) {
-    if (method_exists($this, 'get_default_value')) {
-      return $this->get_default_value($name, $value); // Moodle >= 3.10
-    } else {
-      return get_user_preferences($this->plugin_name().'_'.$name, $value); // Moodle <= 3.9
-    }
-  }
-
-  /**
-   * Fetch a constant from the plugin class in "questiontype.php".
-   * @param string $name name of the constant
-   * @return int value of the constant
-   */
-  public function constant($name) {
-    return constant('qtype_essaycosine::'.$name);
+  private function get_constant($name) {
+    return constant("qtype_essaycosine::$name");
   }
 
   public function plugin_name() {
