@@ -39,7 +39,9 @@ require_once($CFG->dirroot.'/lib/questionlib.php');
 class qtype_essaycosine_renderer extends qtype_renderer {
 
   /** @var question_display_options */
-  public $diplayoptions = null;
+  private $displayoptions = null;
+
+  private $response = [];
   
   /**
    * Generate the display of the formulation part of the question. This is the
@@ -54,10 +56,13 @@ class qtype_essaycosine_renderer extends qtype_renderer {
   public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
     global $PAGE;
 
+    $this->displayoptions = $options;
+
     $question = $qa->get_question();
     $response = $qa->get_last_qt_data(); 
-    //TODO: process the necessarry response details
-    // $response = $question->process_response($response);
+    
+    // to process additional information about the response of the student 
+    $this->response = $question->process_response($response);
 
     // format question text
     $qtext = $question->format_questiontext($qa);
@@ -95,6 +100,130 @@ class qtype_essaycosine_renderer extends qtype_renderer {
     return $result;
   }
 
+  /**
+   * Generate the specific feedback. This is feedback that varies according to
+   * the response the student gave.
+   * @param question_attempt $qa the question attempt to display.
+   * @return string HTML fragment.
+   */
+  protected function specific_feedback(question_attempt $qa) {
+    $output = '';
+
+    // Decide if we should show grade explanation.
+    $step = $qa->get_last_step();
+    if (!$step) return $output;
+
+    $plugin_name = $this->plugin_name();
+    $question = $qa->get_question();
+
+    $showteacher = empty($this->displayoptions->context) ? false : has_capability('mod/quiz:grade', $this->displayoptions->context);
+    $showstudent = $showteacher ? false : has_capability('mod/quiz:attempt', $this->displayoptions->context);
+
+    // dropdown options in edit_essaycosine_form.php
+    $show = [
+      $this->get_constant('SHOW_NONE') => false,
+      $this->get_constant('SHOW_STUDENTS_ONLY') => $showstudent,
+      $this->get_constant('SHOW_TEACHERS_ONLY') => $showteacher, 
+      $this->get_constant('SHOW_TEACHERS_AND_STUDENTS') => $showstudent || $showteacher
+    ];
+
+    // show text statistic if user choose so and stats item is selected at least one
+    $showtextstats = $show[$question->showtextstats] && strlen(trim($question->textstatitems));
+    if ($showtextstats) {
+      $strmanager = get_string_manager();
+      
+      $table = new html_table();
+      $table->attributes['class'] = 'generaltable essaycosine review stats';
+
+      $statsitem = explode(',', $question->textstatitems);
+      foreach ($statsitem as $item) {
+        $label = get_string($item, $plugin_name);
+
+        if ($strmanager->string_exists($item . '_help', $plugin_name)) {
+          $label .= $this->help_icon($item, $plugin_name);
+        }
+
+        $value = isset($this->response['stats']->$item) ? $this->response['stats']->$item : 0.0;
+        $value = number_format((float) $value);
+
+        $head = new html_table_cell($label);
+        $data = new html_table_cell($value);
+        $table->data[] = new html_table_row([$head, $data]);
+      }
+
+      $output .= html_writer::tag('h5', get_string('textstatistics', $plugin_name));
+      $output .= html_writer::table($table);
+    }
+
+    // display plagiarism links if any
+    if (isset($this->response['plagiarism'])) {
+      $output .= html_writer::tag('h5', get_string('plagiarismcheck', $plugin_name));
+  
+      $plagiarism = [];
+      foreach ($this->response['plagiarism'] as $link) {
+        $plagiarism[] = html_writer::tag('a', $link, ['href' => $link]);
+      }
+
+      $plagiarism = implode(html_writer::empty_tag('br', $plagiarism));
+      $output .= $plagiarism;
+    }
+
+    // show feedback if user choose so
+    $showfeedback = $show[$question->showfeedback];
+    $float_precision = isset($this->displayoptions->markdp) ? $this->displayoptions->markdp : 0;
+    if ($showfeedback) {
+      $output .= html_writer::tag('h5', get_string('feedbacksection', $plugin_name));
+
+      $maxgrade = $qa->get_max_mark();
+      
+      $step = $qa->get_last_step_with_behaviour_var('finish');
+      if ($step->get_id()) {
+        $grade = format_float($this->response['autograde'] * $maxgrade, $float_precision);
+      } else {
+        $grade = $qa->format_mark($float_precision);
+      }
+      
+      $output .= html_writer::tag('p', get_string('feedback', $plugin_name, $grade));
+    }
+
+    // add details of most recent manual override if any
+    $step = $qa->get_last_step_with_behaviour_var('mark');
+    if ($step->get_id()) {
+      $gradeovr = (object) [
+        'datetime' => userdate($step->get_timecreated(), get_string('explanationdatetime', $this->plugin_name())),
+        'manualgrade' => format_float($step->get_behaviour_var('mark'), $float_precision)
+      ];
+
+      $output .= html_writer::tag('h5', get_string('grading', $this->plugin_name()));
+      $output .= html_writer::tag('p', get_string('datetime', $this->plugin_name(), $gradeovr));
+      $output .= html_writer::tag('p', get_string('explanationoverride', $this->plugin_name(), $gradeovr));
+    }
+
+    return $output;
+  }
+
+  /**
+   * Display any extra question-type specific content that should be visible
+   * when grading, if appropriate.
+   *
+   * @param question_attempt $qa a question attempt.
+   * @param question_display_options $options controls what should and should not be displayed.
+   * @return string HTML fragment.
+   */
+  public function manual_comment(question_attempt $qa, question_display_options $options) {
+    $comment = '';
+    if ($options->manualcomment != question_display_options::EDITABLE) return $comment;
+    
+    $plugin = $this->plugin_name();
+    $question = $qa->get_question();
+
+    $comment = $question->graderinfo;
+    $comment = $question->format_text($comment, $comment, $qa, $plugin, 'graderinfo', $question->id);
+    $comment = html_writer::nonempty_tag('div', $comment, ['class' => 'graderinfo']);
+
+    return $comment;
+  }
+
 
   /**
    * Displays any attached files when the question is in read-only mode.
@@ -114,6 +243,17 @@ class qtype_essaycosine_renderer extends qtype_renderer {
    */
   public function files_input(question_attempt $qa, question_display_options $options) {
     //TODO
+  }
+
+  /**
+   * Fetch a constant attribute of qtype_essaycosine class inside "questiontype.php" file.
+   */
+  private function get_constant($name) {
+    return constant("qtype_essaycosine::$name");
+  }
+
+  private function plugin_name() {
+    return 'qtype_essaycosine';
   }
 
 }

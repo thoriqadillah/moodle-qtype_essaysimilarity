@@ -29,11 +29,6 @@ require_once($CFG->dirroot.'/question/type/essay/question.php');
 
 class qtype_essaycosine_question extends qtype_essay_question implements question_automatically_gradable {
 
-  /** Processed response with additional information 
-   * @var array 
-  */
-  public $response = [];
-
   public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
     if ($this->enableautograde) return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
 
@@ -60,6 +55,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
 
     $responsetext = '';
     $answerkeytext = '';
+    $similarity = 0.0;
     
     // get the plain text of the response and answer key
     if (isset($response)) {
@@ -68,6 +64,10 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
       
       $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
       $answerkeytext = core_text::strtolower($answerkeytext);
+
+      $tok_response = $this->tokenize($responsetext);
+      $tok_answerkey = $this->tokenize($answerkeytext);
+      $similarity = $this->cosine_similarity($tok_answerkey, $tok_response);
     }
 
     $stats = $this->get_stats($responsetext);
@@ -76,7 +76,10 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
       'text' => $responsetext,
       'answerkey' => $answerkeytext,
       'stats' => $stats,
+      'autograde' => $similarity
     ];
+
+    //TODO: save text stats to database
     
     // get the attachments if any
     if (isset($response['attachments'])) {
@@ -126,14 +129,9 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response(array $response) {
-    $this->response = $this->process_response($response);
+    $response = $this->process_response($response);
 
-    $tok_response = $this->tokenize($this->response['text']);
-    $tok_answerkey = $this->tokenize($this->response['answerkey']);
-    $similarity = $this->cosine_similarity($tok_answerkey, $tok_response);
-    $this->response['autograde'] = $similarity;
-
-    return [$similarity, question_state::graded_state_for_fraction($$similarity)];
+    return [$response['autograde'], question_state::graded_state_for_fraction($response['autograde'])];
   }
 
   /**
@@ -181,6 +179,10 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
       return 0.00;
     }
 
+    if (empty($a) || empty($b)) {
+      return 0.00;
+    }
+
     $v1 = is_int(key($a)) ? array_count_values($a) : $a;
     $v2 = is_int(key($b)) ? array_count_values($b) : $b;
     
@@ -195,7 +197,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
     }
 
     $v1_norm = sqrt($v1_norm);
-    if ($v1_norm === 0) return $v1_norm;
+    if ($v1_norm === 0) return 0.00;
     
     $v2_norm = 0.0;
     foreach ($v2 as $i => $xi) {
@@ -203,7 +205,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
     }
 
     $v2_norm = sqrt($v2_norm);
-    if ($v2_norm === 0) return $v2_norm;
+    if ($v2_norm === 0) return 0.00;
 
     return $prod / ($v1_norm * $v2_norm);
   }
