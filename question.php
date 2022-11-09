@@ -41,7 +41,29 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
    * @return string the message.
    */
   public function get_validation_error(array $response) {
-    //TODO
+    // check if we have a text answer
+    if (empty($response['answer']) && empty($response['attachments'])) { 
+      return get_string('noresponse', 'quiz');
+    }
+
+    // ensure we have text response, if required
+    $is_required = $this->responseformat == 'noinline' ? 0 : $this->responserequired; // Ensure we have text response, if it's required
+    if ($is_required && empty($response['answer'])) {
+      return get_string('pleaseinputtext', $this->plugin_name());
+    }
+
+    // check that the answer is not simply the unaltered response template/sample.
+    if ($this->is_same_response($response, $this->responsetemplate)) {
+      return get_string('responseisnotoriginal', $this->plugin_name());
+    }
+
+    // ensure we have attachments, if required
+    $attachment_required = $this->attachments ? $this->attachmentsrequired : 0;
+    if ($attachment_required && empty($response['attachments'])) {
+      return get_string('pleaseattachfiles', $this->plugin_name());
+    }
+
+    // no validation error
     return '';
   }
 
@@ -237,6 +259,10 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
     $text = preg_replace('/( *[\x0A-\x0D]+ *)+/s', "\n", $text);
 
     return $text;
+  }
+
+  private function plugin_name() {
+    return 'qtype_essaycosine';
   }
 
   /**
