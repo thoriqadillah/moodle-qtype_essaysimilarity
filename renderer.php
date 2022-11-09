@@ -83,7 +83,7 @@ class qtype_essaycosine_renderer extends qtype_renderer {
     }
 
     $files = '';
-    if ($question->attachments) {
+    if ($question->attachmentsrequired) {
       $files = $options->readonly ? $this->files_read_only($qa, $options) : $this->files_input($qa, $options);
     }
 
