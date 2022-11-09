@@ -30,21 +30,25 @@ $string['answerkey'] = 'Answer key';
 $string['chars'] = 'Characters';
 $string['charspersentence'] = 'Characters per sentence';
 
+$string['datetime'] = '{$a->datetime}';
+
 $string['enableautograde'] = 'Enable auto grading';
 $string['enableautograde_help'] = 'If enabled, the answer of the student will be automatically graded';
-$string['explanationdatetime'] = 'on %Y %b %d (%a) at %H:%M';
-$string['explanationoverride'] = 'Later, {$a->datetime}, the grade for this essay was manually set to {$a->manualgrade}.';
+$string['explanationdatetime'] = '%Y %b %d (%a) at %H:%M';
+$string['explanationoverride'] = 'The grade for this essay was manually set to {$a->manualgrade}.';
 
 $string['fogindex'] = 'Fog index';
-$string['fogindex_help'] = 'The Gunning fog index is a measure of readability. It is calculated using the following formula.';
-$string['feedback'] = 'The similarity between answer and the answer key is ';
+$string['fogindex_help'] = 'The Gunning fog index is a measure of readability that aims to determine the level of text difficulty, or how easy a text is to read';
+$string['feedback'] = 'The similarity between answer and the answer key is {$a}. This is automatic grading. The score may be overriden by the teacher or accepted as is';
 $string['feedbacksection'] = 'Feedback';
+
+$string['grading'] = 'Grading';
 
 $string['answerkey'] = 'Answer key';
 $string['answerkey_help'] = 'Answer key of the question';
 
 $string['lexicaldensity'] = 'Lexical density';
-$string['lexicaldensity_help'] = 'The lexical density is a percentage calculated using the following formula.';
+$string['lexicaldensity_help'] = 'The lexical density is a percentage that measures the structure and complexity of human communication in a language';
 $string['longwords'] = 'Long words';
 $string['longwordspersentence'] = 'Long words per sentence';
 
@@ -58,13 +62,13 @@ $string['paragraphs'] = 'Paragraphs';
 $string['plagiarismcheck'] = 'Plagiarism check';
 $string['pleaseattachfiles'] = 'Please attach the required number of files.';
 $string['pleaseinputtext'] = 'Please input your response/answer in the text box.';
-$string['pluginname'] = 'Essay (cosine similarity check)';
+$string['pluginname'] = 'Essay (similarity checker)';
 $string['pluginname_help'] = 'Automatic grading where the grade is gained by comparing the similarity between student answer and teacher answer key. The automatic grade may be overridden later by the teacher.';
 $string['pluginname_link'] = 'question/type/essaycosine';
-$string['pluginnameadding'] = 'Adding an Essay (cosine similarity check) question';
-$string['pluginnameediting'] = 'Editing an Essay (cosine similarity check) question';
+$string['pluginnameadding'] = 'Adding an Essay (similarity checker) question';
+$string['pluginnameediting'] = 'Editing an Essay (similarity checker) question';
 $string['pluginnamesummary'] = 'Allows an essay as a question response that will be graded automatically by comparing the similarity between the response and teacher answer key. The grade may be overridden later.';
-$string['privacy:metadata'] = 'The Essay (cosine similarity check) question type plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Essay (similarity checker) question type plugin does not store any personal data.';
 
 $string['responseisnotoriginal'] = 'Please provide your own answer';
 $string['requiredfilecount'] = 'Required number of files: {$a}';
