@@ -232,7 +232,56 @@ class qtype_essaycosine_renderer extends qtype_renderer {
    *      not be displayed. Used to get the context.
    */
   public function files_read_only(question_attempt $qa, question_display_options $options) {
-    //TODO
+    $output = [];
+
+    $files = $qa->get_last_qt_files('attachments', $options->context->id);
+    foreach ($files as $file) {
+      $url = $qa->get_response_file_url($file);
+      $url = preg_replace('/(\?|\&|\&amp;)forcedownload=1/', '', $url);
+
+      $mimetype = $file->get_mimetype();
+      $mimetext = get_mimetype_description($file);
+      $filetype = substr($mimetype, 0, strpos($mimetype, '/'));
+      switch ($filetype) {
+        case 'image':
+          $attr = [
+            'src' => $url,
+            'alt' => $mimetext,
+            'class' => 'img-responsive'
+          ];
+          $file = html_writer::empty_tag('img', $attr);
+          break;
+
+        case 'audio':
+          $file = html_writer::empty_tag('source', ['src' => $url]);
+          $attr = ['controls' => 'true'];
+          $file = html_writer::tag('audio', $file.$url, $attr);
+          break;
+
+        case 'video':
+          $file = html_writer::empty_tag('source', ['src' => $url]);
+          $attr = [
+            'controls' => 'true',
+            'playsinline' => 'true'
+          ];
+          $file = html_writer::tag('video', $file.$url, $attr);
+          break;
+
+        default:
+          $icon = file_file_icon($file);
+          $icon = $this->output->pix_icon($icon, $mimetext, 'moodle', ['class' => 'icon']);
+          $file = html_writer::link($qa->get_response_file_url($file), $icon.' '.s($file->get_filename()));
+          break;
+      }
+
+      $attr = [
+        'class'=> "read-only-file $filetype",
+        'style' => 'width: 100%; max-width: 480px;'
+      ];
+      $output[] = html_writer::tag('p', $file, $attr);
+    }
+
+    return implode($output);
   }
 
   /**
@@ -242,7 +291,81 @@ class qtype_essaycosine_renderer extends qtype_renderer {
    *      not be displayed. Used to get the context.
    */
   public function files_input(question_attempt $qa, question_display_options $options) {
-    //TODO
+    global $CFG, $PAGE;
+    require_once($CFG->dirroot.'/lib/form/filemanager.php');
+
+    $question = $qa->get_question();
+    $name = 'attachments';
+    $itemid = $qa->prepare_response_files_draft_itemid($name, $options->context->id);
+    $pickeroptions = (object) [
+      'mainfile' => null,
+      'maxfiles' => $question->attachments,
+      'itemid'   => $itemid,
+      'context'  => $options->context,
+      'return_types' => FILE_INTERNAL
+    ];
+
+    if ($filetypes = $question->filetypeslist) {
+      $pickeroptions->accepted_types = $filetypes;
+    }
+
+    $filemanager = new form_filemanager($pickeroptions);
+    $filemanager->options->maxbytes = $qa->get_question()->maxbytes;
+    $filesrenderer = $this->page->get_renderer('core', 'files');
+    $attr = [
+      'type'  => 'hidden',
+      'value' => $itemid,
+      'name'  => $qa->get_qt_field_name($name)
+    ];
+    $output = $filesrenderer->render($filemanager).html_writer::empty_tag('input', $attr);
+
+    // Append warning about required number of attachments.
+    $restrictions = [];
+    if ($question->attachments) {
+      if ($question->attachments == $question->attachmentsrequired) {
+        $restrictions[] = get_string('requiredfilecount', $this->plugin_name(), $question->attachments);
+      } else if ($question->attachmentsrequired > 0) {
+        $restrictions[] = get_string('minimumfilecount', $this->plugin_name(), $question->attachmentsrequired);
+      } else if ($question->attachments > 0) {
+        $restrictions[] = get_string('maximumfilecount', $this->plugin_name(), $question->attachments);
+      }
+    }
+
+    list($context, $course, $cm) = get_context_info_array($options->context->id);
+
+    $maxbytes = $context ? $course->maxbytes : $PAGE->course->maxbytes;
+    $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $maxbytes);
+    $maxbytes = number_format($maxbytes / 1048576) . ' MB'; // convert KB to MB
+    if ($maxbytes != USER_CAN_IGNORE_FILE_SIZE_LIMITS) {
+      $restrictions[] = get_string('maximumfilesize', $this->plugin_name(), $maxbytes);
+    }
+
+    // Append details of accepted file types.
+    if ($filetypes && class_exists('\\core_form\\filetypes_util')) {
+      // Moodle >= 3.4
+      $util = new core_form\filetypes_util();
+      $filetypes = $util->describe_file_types($filetypes);
+      $filetypes = $this->render_from_template('core_form/filetypes-descriptions', $filetypes);
+      $filetypes = get_string('acceptedfiletypes', 'qtype_essay').get_string('labelsep', 'langconfig').$filetypes;
+      $restrictions[] = $filetypes;
+    } else {
+      // Moodle <= 3.3
+      $filetypes = strtolower($filetypes);
+      $filetypes = preg_split('/[\s,;:"\']+/', $filetypes, 0, PREG_SPLIT_NO_EMPTY);
+      foreach($filetypes as $i => $filetype) {
+        $filetype = str_replace('*.', '', $filetype);
+        $filetypes[$i] = trim(ltrim($filetype, '.'));
+      }
+      $filetypes = array_filter($filetypes);
+      $filetypes = implode(', ', $filetypes);
+      $restrictions[] = get_string('acceptedfiletypes', 'qtype_essay').get_string('labelsep', 'langconfig').$filetypes;
+    }
+
+    if (count($restrictions)) {
+      $output .= html_writer::alist($restrictions);
+    }
+
+    return $output;
   }
 
   /**
