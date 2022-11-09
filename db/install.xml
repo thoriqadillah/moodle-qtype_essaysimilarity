@@ -37,18 +37,18 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
-        <FIELD NAME="chars" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of characters from question response"/>
-        <FIELD NAME="words" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of words from question response"/>
-        <FIELD NAME="sentences" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of sentences from question response"/>
-        <FIELD NAME="paragraphs" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of paragraphs from question response"/>
-        <FIELD NAME="uniquewords" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of unique words from question response"/>
-        <FIELD NAME="longwords" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of long words from question response"/>
-        <FIELD NAME="charspersentence" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of characters per sentence from question response"/>
-        <FIELD NAME="wordspersentence" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of words per sentence from question response"/>
-        <FIELD NAME="longwordspersentence" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of long words per sentence from question response"/>
-        <FIELD NAME="sentencesperparagraph" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Count of sentences per paragraph from question response"/>
-        <FIELD NAME="lexicaldensity" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The lexical density of question response"/>
-        <FIELD NAME="fogindex" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The fog index of question response"/>
+        <FIELD NAME="chars" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of characters from question response"/>
+        <FIELD NAME="words" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of words from question response"/>
+        <FIELD NAME="sentences" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of sentences from question response"/>
+        <FIELD NAME="paragraphs" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of paragraphs from question response"/>
+        <FIELD NAME="uniquewords" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of unique words from question response"/>
+        <FIELD NAME="longwords" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of long words from question response"/>
+        <FIELD NAME="charspersentence" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of characters per sentence from question response"/>
+        <FIELD NAME="wordspersentence" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of words per sentence from question response"/>
+        <FIELD NAME="longwordspersentence" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of long words per sentence from question response"/>
+        <FIELD NAME="sentencesperparagraph" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of sentences per paragraph from question response"/>
+        <FIELD NAME="lexicaldensity" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The lexical density of question response"/>
+        <FIELD NAME="fogindex" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The fog index of question response"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
