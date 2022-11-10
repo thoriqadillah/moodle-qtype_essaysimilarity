@@ -73,7 +73,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
    * @return array $response
    */
   public function process_response($response) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $responsetext = '';
     $answerkeytext = '';
@@ -92,7 +92,26 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
       $similarity = $this->cosine_similarity($tok_answerkey, $tok_response);
     }
 
-    $stats = $this->get_stats($responsetext);
+    // get all text stats and then save to DB according what user choose in form editing
+    $textstats_table = 'question_answer_stats';
+    $oldtextstats = $DB->get_record($textstats_table, ['questionid' => $this->id, 'userid' => $USER->id]);
+    
+    $stats = $this->get_stats($responsetext); 
+    $textstatitems = explode(',', $this->textstatitems);
+    $textstats = (object) [
+      'questionid' => $this->id,
+      'userid' => $USER->id
+    ];
+    foreach ($textstatitems as $item) {
+      $textstats->$item = $stats->$item;
+    }
+
+    if ($oldtextstats) {
+      $textstats->id = $oldtextstats->id;
+      $DB->update_record($textstats_table, $textstats);
+    } else {
+      $DB->insert_record($textstats_table, $textstats);
+    }
     
     $result = [
       'text' => $responsetext,
@@ -181,6 +200,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
 
   /**
    * Whitespace tokenizer
+   * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers/WhitespaceTokenizer.php
    * @param string $str string to be tokenized
    * @return array $str tokenized string
    */
@@ -192,8 +212,9 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
 
   /**
    * Get the similarity between two string
+   * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Similarity/CosineSimilarity.php
    * @param array @a first string that has been tokenized
-   * @param array @b secoond string that has been tokenized
+   * @param array @b second string that has been tokenized
    * @return float percentage of the similarity
    */
   private function cosine_similarity($a, $b) {
@@ -270,7 +291,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
    * @param string $responsetext 
    */
   private function get_stats($responsetext) {
-    $precision = 1;
+    $precision = 0;
     $stats = (object) [
       'chars' => $this->get_stats_chars($responsetext),
       'words' => $this->get_stats_words($responsetext),
@@ -287,7 +308,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
     ];
 
     if ($stats->words) {
-      $stats->lexicaldensity = round(($stats->uniquewords / $stats->words) * 100, 0).'%';
+      $stats->lexicaldensity = round(($stats->uniquewords / $stats->words) * 100, $precision);
     }
 
     if ($stats->sentences) {

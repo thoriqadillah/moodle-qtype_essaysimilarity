@@ -155,6 +155,7 @@ class qtype_essaycosine_renderer extends qtype_renderer {
 
         $value = isset($this->response['stats']->$item) ? $this->response['stats']->$item : 0.0;
         $value = number_format((float) $value);
+        $value .= $item == 'lexicaldensity' ? '%' : ''; // add percent symbol if the item is lexical density
 
         $head = new html_table_cell($label);
         $data = new html_table_cell($value);

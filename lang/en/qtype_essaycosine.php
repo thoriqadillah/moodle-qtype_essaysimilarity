@@ -39,7 +39,7 @@ $string['explanationoverride'] = 'The grade for this essay was manually set to {
 
 $string['fogindex'] = 'Fog index';
 $string['fogindex_help'] = 'The Gunning fog index is a measure of readability that aims to determine the level of text difficulty, or how easy a text is to read';
-$string['feedback'] = 'The similarity between answer and the answer key is {$a}. This is automatic grading. The score may be overriden by the teacher or accepted as is';
+$string['feedback'] = 'The similarity between answer and the answer key is {$a}. This is automatic grading. The grade may be overriden by the teacher or accepted as is';
 $string['feedbacksection'] = 'Feedback';
 
 $string['grading'] = 'Grading';
