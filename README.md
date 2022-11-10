@@ -25,6 +25,6 @@ After that go to site administration page and it should shows that new plugin is
 Delete the essaycosine folder inside your moodle
 
 ## License
-[MIT](https://github.com/thoriqadillah/essaycosine/blob/main/LICENSE)
+[GPL v3](https://github.com/thoriqadillah/essaycosine/blob/main/LICENSE)
 
 Thanks to Gordon Bateson (@gbateson) that allows me to use his [plugin](https://github.com/gbateson/moodle-qtype_essayautograde) as reference to build my own
