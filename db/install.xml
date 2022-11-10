@@ -23,6 +23,7 @@
         <FIELD NAME="showfeedback" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the actionable feedback be shown on the grading and review pages?"/>
         <FIELD NAME="answerkey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Key answer provided by the teacher"/>
         <FIELD NAME="answerkeyformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for answerkey."/>
+        <FIELD NAME="showanswerkey" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the actionable feedback be shown on the grading and review pages?"/>
         <FIELD NAME="showtextstats" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the text statistics be shown on the grading and review pages?"/>
         <FIELD NAME="textstatitems" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A comma separted list of auto-feedback items to be displayed"/>
         <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
@@ -36,7 +37,8 @@
     <TABLE NAME="question_answer_stats" COMMENT="Text statistics from essaycosine">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
         <FIELD NAME="chars" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of characters from question response"/>
         <FIELD NAME="words" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of words from question response"/>
         <FIELD NAME="sentences" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Count of sentences from question response"/>

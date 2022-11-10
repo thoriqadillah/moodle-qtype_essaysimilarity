@@ -75,10 +75,12 @@ $string['requiredfilecount'] = 'Required number of files: {$a}';
 
 $string['sentences'] = 'Sentences';
 $string['sentencesperparagraph'] = 'Sentences per paragraph';
-$string['showfeedback'] = 'Show feedback to';
-$string['showfeedback_help'] = 'If this option is enabled, a table of actionable feedback will be shown on the grading and review pages. Actionable feedback is feedback that tells students what they need to do to improve.';
+$string['showanswerkey'] = 'Show answer key?';
+$string['showanswerkey_help'] = 'If this option is enabled, the answer key will be shown on the grading and review page.';
+$string['showfeedback'] = 'Show feedback?';
+$string['showfeedback_help'] = 'If this option is enabled, a feedback will be shown on the grading and review page.';
 $string['showtextstats'] = 'Show text statistics?';
-$string['showtextstats_help'] = 'If this option is enabled, statistics about the text will be shown.';
+$string['showtextstats_help'] = 'If this option is enabled, statistics about the text will be shown on the grading and review page.';
 $string['showtostudentsonly'] = 'Only show to students';
 $string['showtoteachersonly'] = 'Only show to teachers';
 $string['showtoteachersandstudents'] = 'Show to teachers and students';

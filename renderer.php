@@ -127,6 +127,16 @@ class qtype_essaycosine_renderer extends qtype_renderer {
       $this->get_constant('SHOW_TEACHERS_AND_STUDENTS') => $showstudent || $showteacher
     ];
 
+    $showanswerkey = $show[$question->showanswerkey];
+    if ($showanswerkey) {
+      $output .= html_writer::tag('h5', get_string('answerkey', $plugin_name));
+
+      $step = $qa->get_last_step_with_behaviour_var('finish');
+      if ($step->get_id()) {
+        $output .= html_writer::tag('p', $question->answerkey);
+      } 
+    }
+
     // show text statistic if user choose so and stats item is selected at least one
     $showtextstats = $show[$question->showtextstats] && strlen(trim($question->textstatitems));
     if ($showtextstats) {

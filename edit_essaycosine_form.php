@@ -69,6 +69,14 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
     $mform->addHelpButton($name, $name, $plugin);
     $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
+    $name = 'showanswerkey';
+    $label = get_string($name, $plugin);
+    $mform->addElement('select', $name, $label, $this->dropdown_options());
+    $mform->addHelpButton($name, $name, $plugin);
+    $mform->setType($name, PARAM_INT);
+    $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_NONE')));
+    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
+
     $name = 'showfeedback';
     $label = get_string($name, $plugin);
     $mform->addElement('select', $name, $label, $this->dropdown_options());
@@ -133,6 +141,7 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
       'autograding',
       'enableautograde',
       'answerkey',
+      'showanswerkey',
       'showfeedback',
       'showtextstats',
       'textstatitems',
@@ -150,6 +159,7 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
 
     // Initialize fields that has numeric value.
     $question->enableautograde = $question->options->enableautograde;
+    $question->showanswerkey = $question->options->showanswerkey;
     $question->showfeedback = $question->options->showfeedback;
     $question->showtextstats = $question->options->showtextstats;
 
