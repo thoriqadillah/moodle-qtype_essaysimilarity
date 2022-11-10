@@ -339,13 +339,11 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
 
   private function get_stats_sentences($responsetext) {
     $items = preg_split('/[!?.]+(?![0-9])/', $responsetext);
-    // $items = array_filter($items);
     return count($items);
   }
 
   private function get_stats_paragraphs($responsetext) {
     $items = explode("\n", $responsetext);
-    // $items = array_filter($items);
     return count($items);
   }
 

@@ -367,7 +367,6 @@ class qtype_essaycosine_renderer extends qtype_renderer {
         $filetype = str_replace('*.', '', $filetype);
         $filetypes[$i] = trim(ltrim($filetype, '.'));
       }
-      $filetypes = array_filter($filetypes);
       $filetypes = implode(', ', $filetypes);
       $restrictions[] = get_string('acceptedfiletypes', 'qtype_essay').get_string('labelsep', 'langconfig').$filetypes;
     }

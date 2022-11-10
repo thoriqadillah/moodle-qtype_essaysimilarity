@@ -89,8 +89,6 @@ class qtype_essaycosine extends question_type {
     if (!empty($question->textstatitems)) {
       $textstatitems = $question->textstatitems;
       $textstatitems = array_keys($textstatitems);
-      $textstatitems = array_map('trim', $textstatitems);
-      $textstatitems = array_filter($textstatitems);
       $textstatitems = implode(',', $textstatitems);
     }
 
