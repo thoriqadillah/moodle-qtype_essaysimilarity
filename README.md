@@ -4,6 +4,7 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview2](pix/preview2.png)
 ![preview3](pix/preview3.png)
 ## Features
+- Auto grading using cosine similarity
 - Statistical text
 - Answer key
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
@@ -22,5 +23,8 @@ After that go to site administration page and it should shows that new plugin is
 
 ## Uninstall
 Delete the essaycosine folder inside your moodle
+
+## License
+[MIT](https://github.com/thoriqadillah/essaycosine/blob/main/LICENSE)
 
 Thanks to Gordon Bateson (@gbateson) that allows me to use his [plugin](https://github.com/gbateson/moodle-qtype_essayautograde) as reference to build my own
