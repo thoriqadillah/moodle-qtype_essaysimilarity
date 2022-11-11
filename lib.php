@@ -18,7 +18,7 @@
  * Serve question type files
  *
  * @since      Moodle 2.0
- * @package    qtype_essaycosine
+ * @package    qtype_essaysimilarity
  * @copyright  Atthoriq Adillah Wicaksana <thoriqadillah59@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();/**
 
 * Checks file access for essay questions.
 *
-* @package  qtype_essaycosine
+* @package  qtype_essaysimilarity
 * @category files
 * @param stdClass $course course object
 * @param stdClass $cm course module object
@@ -38,8 +38,8 @@ defined('MOODLE_INTERNAL') || die();/**
 * @param array $options additional options affecting the file serving
 * @return bool
 */
-function qtype_essaycosine_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+function qtype_essaysimilarity_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
   global $CFG;
   require_once($CFG->libdir . '/questionlib.php');
-  question_pluginfile($course, $context, 'qtype_essaycosine', $filearea, $args, $forcedownload, $options);
+  question_pluginfile($course, $context, 'qtype_essaysimilarity', $filearea, $args, $forcedownload, $options);
 }

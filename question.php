@@ -27,7 +27,7 @@ defined("MOODLE_INTERNAL") || die();
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 
-class qtype_essaycosine_question extends qtype_essay_question implements question_automatically_gradable {
+class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
   public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
     if ($this->enableautograde) return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
@@ -283,7 +283,7 @@ class qtype_essaycosine_question extends qtype_essay_question implements questio
   }
 
   private function plugin_name() {
-    return 'qtype_essaycosine';
+    return 'qtype_essaysimilarity';
   }
 
   /**

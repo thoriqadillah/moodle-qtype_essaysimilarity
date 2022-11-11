@@ -18,7 +18,7 @@
  * Question type class for the essay question type.
  *
  * @package    qtype
- * @subpackage essaycosine
+ * @subpackage essaysimilarity
  * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,13 +30,13 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/questionlib.php');
 /**
- * The essaycosine question type renderer.
+ * The essaysimilarity question type renderer.
  *
  * @copyright  2022 Atthoriq Adillah Wicaksana 
  * @copyright  based on work by 2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essaycosine_renderer extends qtype_renderer {
+class qtype_essaysimilarity_renderer extends qtype_renderer {
 
   /** @var question_display_options */
   private $displayoptions = null;
@@ -83,7 +83,7 @@ class qtype_essaycosine_renderer extends qtype_renderer {
     }
 
     $files = '';
-    if ($question->attachmentsrequired) {
+    if ($question->attachments) {
       $files = $options->readonly ? $this->files_read_only($qa, $options) : $this->files_input($qa, $options);
     }
 
@@ -119,7 +119,7 @@ class qtype_essaycosine_renderer extends qtype_renderer {
     $showteacher = empty($this->displayoptions->context) ? false : has_capability('mod/quiz:grade', $this->displayoptions->context);
     $showstudent = $showteacher ? false : has_capability('mod/quiz:attempt', $this->displayoptions->context);
 
-    // dropdown options in edit_essaycosine_form.php
+    // dropdown options in edit_essaysimilarity_form.php
     $show = [
       $this->get_constant('SHOW_NONE') => false,
       $this->get_constant('SHOW_STUDENTS_ONLY') => $showstudent,
@@ -143,7 +143,7 @@ class qtype_essaycosine_renderer extends qtype_renderer {
       $strmanager = get_string_manager();
       
       $table = new html_table();
-      $table->attributes['class'] = 'generaltable essaycosine review stats';
+      $table->attributes['class'] = 'generaltable essaysimilarity review stats';
 
       $statsitem = explode(',', $question->textstatitems);
       foreach ($statsitem as $item) {
@@ -379,77 +379,77 @@ class qtype_essaycosine_renderer extends qtype_renderer {
   }
 
   /**
-   * Fetch a constant attribute of qtype_essaycosine class inside "questiontype.php" file.
+   * Fetch a constant attribute of qtype_essaysimilarity class inside "questiontype.php" file.
    */
   private function get_constant($name) {
-    return constant("qtype_essaycosine::$name");
+    return constant("qtype_essaysimilarity::$name");
   }
 
   private function plugin_name() {
-    return 'qtype_essaycosine';
+    return 'qtype_essaysimilarity';
   }
 
 }
 
 require_once($CFG->dirroot.'/question/type/essay/renderer.php');
 /**
- * An essaycosine format renderer for essaycosines where the student should not enter
+ * An essaysimilarity format renderer for essaysimilaritys where the student should not enter
  * any inline response.
  *
  * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2013 Binghamton University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essaycosine_format_noinline_renderer extends qtype_essay_format_noinline_renderer {
+class qtype_essaysimilarity_format_noinline_renderer extends qtype_essay_format_noinline_renderer {
   protected function class_name() {
-    return 'qtype_essaycosine_noinline';
+    return 'qtype_essaysimilarity_noinline';
   }
 }
 
 /**
-* An essaycosine format renderer for essaycosines where the student should use the HTML
+* An essaysimilarity format renderer for essaysimilaritys where the student should use the HTML
 * editor without the file picker.
 *
 * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
 * @copyright  based on work by 2011 The Open University
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class qtype_essaycosine_format_editor_renderer extends qtype_essay_format_editor_renderer {
+class qtype_essaysimilarity_format_editor_renderer extends qtype_essay_format_editor_renderer {
   protected function class_name() {
-      return 'qtype_essaycosine_editor';
+      return 'qtype_essaysimilarity_editor';
   }
 }
 
 /**
-* An essaycosine format renderer for essaycosines where the student should use the HTML
+* An essaysimilarity format renderer for essaysimilaritys where the student should use the HTML
 * editor with the file picker.
 *
 * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
 * @copyright  based on work by 2011 The Open University
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class qtype_essaycosine_format_editorfilepicker_renderer extends qtype_essay_format_editorfilepicker_renderer {
+class qtype_essaysimilarity_format_editorfilepicker_renderer extends qtype_essay_format_editorfilepicker_renderer {
   protected function class_name() {
-      return 'qtype_essaycosine_editorfilepicker';
+      return 'qtype_essaysimilarity_editorfilepicker';
   }
 }
 
 /**
-* An essaycosine format renderer for essaycosines where the student should use a plain
+* An essaysimilarity format renderer for essaysimilaritys where the student should use a plain
 * input box, but with a normal, proportional font.
 *
 * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
 * @copyright  based on work by 2011 The Open University
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class qtype_essaycosine_format_plain_renderer extends qtype_essay_format_plain_renderer {
+class qtype_essaysimilarity_format_plain_renderer extends qtype_essay_format_plain_renderer {
   protected function class_name() {
-      return 'qtype_essaycosine_plain';
+      return 'qtype_essaysimilarity_plain';
   }
 }
 
 /**
-* An essaycosine format renderer for essaycosines where the student should use a plain
+* An essaysimilarity format renderer for essaysimilaritys where the student should use a plain
 * input box with a monospaced font. You might use this, for example, for a
 * question where the students should type computer code.
 *
@@ -457,9 +457,9 @@ class qtype_essaycosine_format_plain_renderer extends qtype_essay_format_plain_r
 * @copyright  based on work by 2011 The Open University
 * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
-class qtype_essaycosine_format_monospaced_renderer extends qtype_essay_format_plain_renderer {
+class qtype_essaysimilarity_format_monospaced_renderer extends qtype_essay_format_plain_renderer {
   protected function class_name() {
-      return 'qtype_essaycosine_monospaced';
+      return 'qtype_essaysimilarity_monospaced';
   }
 }
 

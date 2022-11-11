@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'qtype_essaycosine', language 'en', branch 'MOODLE_20_STABLE'
+ * Strings for component 'qtype_essaysimilarity', language 'en', branch 'MOODLE_20_STABLE'
  *
  * @package    qtype
- * @subpackage essaycosine
+ * @subpackage essaysimilarity
  * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2018 Gordon Bateson 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -62,13 +62,13 @@ $string['paragraphs'] = 'Paragraphs';
 $string['plagiarismcheck'] = 'Plagiarism check';
 $string['pleaseattachfiles'] = 'Please attach the required number of files.';
 $string['pleaseinputtext'] = 'Please input your response/answer in the text box.';
-$string['pluginname'] = 'Essay (similarity checker)';
+$string['pluginname'] = 'Essay Similarity Checker';
 $string['pluginname_help'] = 'Automatic grading where the grade is gained by comparing the similarity between student answer and teacher answer key. The automatic grade may be overridden later by the teacher.';
-$string['pluginname_link'] = 'question/type/essaycosine';
-$string['pluginnameadding'] = 'Adding an Essay (similarity checker) question';
-$string['pluginnameediting'] = 'Editing an Essay (similarity checker) question';
+$string['pluginname_link'] = 'question/type/essaysimilarity';
+$string['pluginnameadding'] = 'Adding an Essay Similarity Checker question';
+$string['pluginnameediting'] = 'Editing an Essay Similarity Checker question';
 $string['pluginnamesummary'] = 'Allows an essay as a question response that will be graded automatically by comparing the similarity between the response and teacher answer key. The grade may be overridden later.';
-$string['privacy:metadata'] = 'The Essay (similarity checker) question type plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Essay Similarity Checker question type plugin does not store any personal data.';
 
 $string['responseisnotoriginal'] = 'Please provide your own answer';
 $string['requiredfilecount'] = 'Required number of files: {$a}';

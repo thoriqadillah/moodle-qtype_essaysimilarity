@@ -18,7 +18,7 @@
  * Question type class for the essay question type.
  *
  * @package    qtype
- * @subpackage essaycosine
+ * @subpackage essaysimilarity
  * @copyright  2022 thoriqadillah
  * @author     thoriqadillah
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,9 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/engine/lib.php');
-require_once($CFG->dirroot . '/question/type/essaycosine/question.php');
+require_once($CFG->dirroot . '/question/type/essaysimilarity/question.php');
 
-class qtype_essaycosine extends question_type {
+class qtype_essaysimilarity extends question_type {
   // Show/hide values for dropdown
   const SHOW_NONE                  = 0;
   const SHOW_STUDENTS_ONLY         = 1;
@@ -44,7 +44,7 @@ class qtype_essaycosine extends question_type {
   public function extra_question_fields() {
     // DB table name of the plugin is the first index, the rest is table column of the plugin table
     return [
-      "qtype_essaycosine_options", 
+      "qtype_essaysimilarity_option", 
       "responseformat",            
       "responserequired",
       "responsefieldlines",
@@ -80,7 +80,7 @@ class qtype_essaycosine extends question_type {
     global $DB;
 
     $plugin = $this->plugin_name();
-    $plugintable = 'qtype_essaycosine_options';
+    $plugintable = 'qtype_essaysimilarity_option';
 
     $graderinfo = $this->import_or_save_files($question->graderinfo, $question->context, $plugin, 'graderinfo', $question->id);
     $oldquestion = $DB->get_record($plugintable, ['questionid' => $question->id]);
@@ -127,7 +127,7 @@ class qtype_essaycosine extends question_type {
   public function delete_question($questionid, $contextid) {
     global $DB;
 
-    $plugintable = 'qtype_essaycosine_options';
+    $plugintable = 'qtype_essaysimilarity_option';
     $DB->delete_records($plugintable, ['questionid' => $questionid]);
     parent::delete_question($questionid, $contextid);
   }
@@ -184,7 +184,7 @@ class qtype_essaycosine extends question_type {
   }
 
   public function plugin_name() {
-    return 'qtype_essaycosine';
+    return 'qtype_essaysimilarity';
   }
   
 }

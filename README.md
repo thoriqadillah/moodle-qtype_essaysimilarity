@@ -14,7 +14,7 @@ You can choose the following method that suits yout to install the plugin
 ### Using Terminal
 Go to your moodle root directory and execute the following command
 ```
-git clone https://github.com/thoriqadillah/essaycosine.git question/type/essaycosine
+git clone https://github.com/thoriqadillah/essaysimilarity.git question/type/essaysimilarity
 ```
 ### Manual
 Download the zip and extract it to the question/type inside your moodle root directory
@@ -22,9 +22,9 @@ Download the zip and extract it to the question/type inside your moodle root dir
 After that go to site administration page and it should shows that new plugin is present
 
 ## Uninstall
-Delete the essaycosine folder inside your moodle
+Delete the essaysimilarity folder inside your moodle
 
 ## License
-[GPL v3](https://github.com/thoriqadillah/essaycosine/blob/main/LICENSE)
+[GPL v3](https://github.com/thoriqadillah/essaysimilarity/blob/main/LICENSE)
 
 Thanks to Gordon Bateson (@gbateson) that allows me to use his [plugin](https://github.com/gbateson/moodle-qtype_essayautograde) as reference to build my own

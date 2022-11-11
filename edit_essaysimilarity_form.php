@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the editing form for the essaycosine question type.
+ * Defines the editing form for the essaysimilarity question type.
  *
  * @package    qtype
- * @subpackage essaycosine
+ * @subpackage essaysimilarity
  * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2018 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,7 +38,7 @@ require_once($CFG->dirroot.'/question/type/essay/edit_essay_form.php');
  * @copyright  based on work by 2018 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
+class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
 
   /** Number of rows in TEXTAREA elements */
   const TEXTAREA_ROWS = 5;
@@ -251,18 +251,18 @@ class qtype_essaycosine_edit_form extends qtype_essay_edit_form {
   }
 
   /**
-   * Fetch a constant attribute of qtype_essaycosine class inside "questiontype.php" file.
+   * Fetch a constant attribute of qtype_essaysimilarity class inside "questiontype.php" file.
    */
   private function get_constant($name) {
-    return constant("qtype_essaycosine::$name");
+    return constant("qtype_essaysimilarity::$name");
   }
 
   public function plugin_name() {
-    return 'qtype_essaycosine';
+    return 'qtype_essaysimilarity';
   }
 
   public function qtype() {
-    return 'essaycosine';
+    return 'essaysimilarity';
   }
 
 }

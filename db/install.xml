@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/essaycosine/db" VERSION="20140113" COMMENT="XMLDB file for Moodle question/type/essaycosine"
+<XMLDB PATH="question/type/essaysimilarity/db" VERSION="20140113" COMMENT="XMLDB file for Moodle question/type/essaysimilarity"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="qtype_essaycosine_options" COMMENT="Extra options for essaycosine questions.">
+    <TABLE NAME="qtype_essaysimilarity_option" COMMENT="Extra options for essaysimilarity questions.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
@@ -34,7 +34,7 @@
         <KEY NAME="questionid" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="question_answer_stats" COMMENT="Text statistics from essaycosine">
+    <TABLE NAME="question_answer_stats" COMMENT="Text statistics from essaysimilarity">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>

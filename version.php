@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for the essaycosine question type.
+ * Version information for the essaysimilarity question type.
  *
  * @package    qtype
- * @subpackage essaycosine
+ * @subpackage essaysimilarity
  * @copyright  2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2018 Gordon Bateson 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->cron      = 0;
-$plugin->component = 'qtype_essaycosine';
+$plugin->component = 'qtype_essaysimilarity';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2015111600; // Moodle 3.0
 $plugin->version   = 2022040516;
