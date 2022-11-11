@@ -92,12 +92,12 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     $result .= html_writer::tag('div', $qtext, ['class' => 'qtext']);
     $result .= html_writer::start_tag('div', ['class' => 'ablock']);
 
-    $answer_attr = [
-      'class' => 'answer',
-      'style' => 'background-color: #fff; 
-                  padding: 6px 12px;
-                  margin: 10px 0px;'
-    ];
+    $answer_attr = ['class' => 'answer'];
+    if ($options->readonly) {
+      $answer_attr['style'] = 'background-color: #fff; 
+                              padding: 6px 12px;
+                              margin: 10px 0px;';
+    }
 
     $result .= html_writer::tag('div', $answer, $answer_attr);
     $result .= html_writer::tag('div', $files, ['class' => 'attachments']);
