@@ -34,7 +34,7 @@ class id_stemmer implements stemmer {
   /**
    * Cek prefix disallowed sufixes (kombinasi awalan dan akhiran yang tidak diizinkan)
    */
-  private function Cek_Prefix_Disallowed_Sufixes($kata) {
+  private function cek_prefix_disallowed_suffixes($kata) {
     if (preg_match('/^(be)[[:alpha:]]+/(i)\z/i', $kata)) { // be- dan -i
       return true;
     }
@@ -71,6 +71,8 @@ class id_stemmer implements stemmer {
       $_kata = preg_replace('/(kan)\z/i', '', $kata);
       if ($this->cek_kamus($_kata)) return $_kata;
     }
+
+    return $kata;
   }
 
   /**
@@ -245,6 +247,7 @@ class id_stemmer implements stemmer {
     return $kata_asal;
   }
 
+  // Sepertinya untuk kata ganda seperti ciri-ciri => ciri belum diproses
   public function stem($word) {
     // Jika Ada maka kata tersebut adalah kata dasar
     if ($this->cek_kamus($word)) return $word;
@@ -264,5 +267,7 @@ class id_stemmer implements stemmer {
     if ($this->cek_kamus($word)) {
       return $word;
     }
+
+    return $word;
   }
 }

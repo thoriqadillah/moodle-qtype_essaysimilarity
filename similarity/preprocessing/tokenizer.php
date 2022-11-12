@@ -19,7 +19,7 @@ class tokenizer {
   public function tokenize($str, $lang = 'en') {
     require_once("stemmer/$lang/$lang.php");
 
-    $str = $this->clean($str);
+    $str = $this->normalize($str);
     $stopword = new stopword($lang);
 
     $token = preg_split(self::PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
@@ -39,9 +39,12 @@ class tokenizer {
   }
 
   /**
-   * Clean the string from special characters
+   * Normalize the string from special characters and symbols
    */
-  protected function clean($str) {
-    return preg_replace('/[^A-Za-z0-9. -]/', '', $str);
+  protected function normalize($str) {
+    $str = preg_replace('/[^a-z0-9 -]/im', ' ', $str);
+    $str = preg_replace('/( +)/im', ' ', $str);
+
+    return trim($str);
   }
 }
