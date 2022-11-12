@@ -24,8 +24,10 @@
 
 defined("MOODLE_INTERNAL") || die();
 
+
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
+require_once($CFG->dirroot.'/question/type/essaysimilarity/similarity/cosine_similarity.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -74,22 +76,22 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    */
   public function process_response($response) {
     global $CFG, $USER, $DB;
-
+    
     $responsetext = '';
     $answerkeytext = '';
     $similarity = 0.0;
-    
+
     // get the plain text of the response and answer key
-    if (isset($response)) {
+    if (!empty($response['answer'])) {
       $responsetext = $this->to_plaintext($response['answer'], $response['format']);
       $responsetext = core_text::strtolower($responsetext);
       
       $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
       $answerkeytext = core_text::strtolower($answerkeytext);
 
-      $tok_response = $this->tokenize($responsetext);
-      $tok_answerkey = $this->tokenize($answerkeytext);
-      $similarity = $this->cosine_similarity($tok_answerkey, $tok_response);
+      //TODO: add dropdown option for language of the question
+      $sim = new cosine_similarity($answerkeytext, $responsetext, 'id');
+      $similarity = $sim->get_similarity();
     }
 
     // get all text stats and then save to DB according what user choose in form editing
@@ -119,8 +121,6 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       'stats' => $stats,
       'autograde' => $similarity
     ];
-
-    //TODO: save text stats to database
     
     // get the attachments if any
     if (isset($response['attachments'])) {
@@ -196,61 +196,6 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    */
   public function get_right_answer_summary() {
     return null; // this plugin does not show the right answer summary
-  }
-
-  /**
-   * Whitespace tokenizer
-   * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers/WhitespaceTokenizer.php
-   * @param string $str string to be tokenized
-   * @return array $str tokenized string
-   */
-  private function tokenize($str) {
-    $PATTERN = '/[\pZ\pC]+/u';
-
-    return preg_split($PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
-  }
-
-  /**
-   * Get the similarity between two string
-   * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Similarity/CosineSimilarity.php
-   * @param array @a first string that has been tokenized
-   * @param array @b second string that has been tokenized
-   * @return float percentage of the similarity
-   */
-  private function cosine_similarity($a, $b) {
-    if (!is_array($a) || !is_array($b)) {
-      return 0.00;
-    }
-
-    if (empty($a) || empty($b)) {
-      return 0.00;
-    }
-
-    $v1 = is_int(key($a)) ? array_count_values($a) : $a;
-    $v2 = is_int(key($b)) ? array_count_values($b) : $b;
-    
-    $prod = 0.0;
-    $v1_norm = 0.0;
-    foreach ($v1 as $i => $xi) {
-      if (isset($v2[$i])) {
-        $prod += $xi * $v2[$i];
-      }
-
-      $v1_norm += $xi * $xi;
-    }
-
-    $v1_norm = sqrt($v1_norm);
-    if ($v1_norm === 0) return 0.00;
-    
-    $v2_norm = 0.0;
-    foreach ($v2 as $i => $xi) {
-      $v2_norm += $xi * $xi;
-    }
-
-    $v2_norm = sqrt($v2_norm);
-    if ($v2_norm === 0) return 0.00;
-
-    return $prod / ($v1_norm * $v2_norm);
   }
 
   /**

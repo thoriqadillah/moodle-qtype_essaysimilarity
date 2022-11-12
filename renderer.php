@@ -95,7 +95,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     $answer_attr = ['class' => 'answer'];
     if ($options->readonly) {
       $answer_attr['style'] = 'background-color: #fff; 
-                              padding: 6px 12px;
+                              padding: 0.1em;
                               margin: 10px 0px;';
     }
 
