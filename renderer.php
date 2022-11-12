@@ -196,7 +196,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       
       $step = $qa->get_last_step_with_behaviour_var('finish');
       if ($step->get_id()) {
-        $grade = format_float($this->response['autograde'] * $maxgrade, $float_precision);
+        $grade = format_float($step->get_fraction() * $maxgrade, $float_precision);
       } else {
         $grade = $qa->format_mark($float_precision);
       }
