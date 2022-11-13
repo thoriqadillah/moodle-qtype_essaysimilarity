@@ -9651,6 +9651,7 @@ return [
   'hirup',
   'his',
   'hisab',
+  'hisap',
   'histamina',
   'histerektomi',
   'histeria',
