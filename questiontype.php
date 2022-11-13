@@ -37,6 +37,11 @@ class qtype_essaysimilarity extends question_type {
   const SHOW_TEACHERS_ONLY         = 2;
   const SHOW_TEACHERS_AND_STUDENTS = 3;
 
+  /**
+   * Constant value for question language options
+   */
+  const NO_LANG = 'none';
+
   public function is_manual_graded() {
     return true;
   }
@@ -64,7 +69,8 @@ class qtype_essaysimilarity extends question_type {
       "showtextstats",
       "textstatitems",
       "responsetemplate",
-      "responsetemplateformat"
+      "responsetemplateformat",
+      "questionlanguage",
     ];
   }
 
@@ -114,6 +120,7 @@ class qtype_essaysimilarity extends question_type {
       "textstatitems"           => $textstatitems,
       "responsetemplate"        => isset($question->responsetemplate['text']) ? $question->responsetemplate['text'] : '',
       "responsetemplateformat"  => isset($question->responsetemplate['format']) ? $question->responsetemplate['format'] : 0,
+      "questionlanguage"        => isset($question->questionlanguage) ? $question->questionlanguage : self::NO_LANG,
     ];
 
     if ($oldquestion) {
@@ -165,7 +172,8 @@ class qtype_essaysimilarity extends question_type {
       "showtextstats"           => self::SHOW_TEACHERS_ONLY,
       "textstatitems"           => '',
       "responsetemplate"        => '',
-      "responsetemplateformat"  => 0
+      "responsetemplateformat"  => 0,
+      "questionlanguage"        => self::NO_LANG
     ];
   }
 

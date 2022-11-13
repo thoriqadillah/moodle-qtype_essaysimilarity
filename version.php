@@ -30,7 +30,7 @@ $plugin->cron      = 0;
 $plugin->component = 'qtype_essaysimilarity';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2015111600; // Moodle 3.0
-$plugin->version   = 2022040517;
+$plugin->version   = 2022040518;
 $plugin->release   = '2022-04-05 (16)';
 
 // https://docs.moodle.org/dev/Releases

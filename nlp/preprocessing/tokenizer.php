@@ -16,21 +16,23 @@ class tokenizer {
    * @param string $str string to be tokenized
    * @return array $str tokenized string
    */
-  public function tokenize($str, $lang = 'en') {
-    require_once("stemmer/$lang/$lang.php");
-
+  public function tokenize($str, $lang = 'none') {
+    
     $str = $this->normalize($str);
     $stopword = new stopword($lang);
-
+    
     $token = preg_split(self::PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
+    
+    if ($lang !== 'none') {
+      require_once("stemmer/$lang/$lang.php");
 
-    $stemmer = new en_stemmer(); //default stemmer
-    $classname = $lang . '_stemmer';
-    if (class_exists($classname)) {
-      $stemmer = new $classname();
+      $classname = $lang . '_stemmer';
+      if (class_exists($classname)) {
+        $stemmer = new $classname();
+      }
+  
+      $token = $stopword->remove_stopword($token, $stemmer);
     }
-
-    $token = $stopword->remove_stopword($token, $stemmer);
 
     return is_int(key($token)) ? array_count_values($token) : $token;
   }

@@ -51,6 +51,9 @@ $string['lexicaldensity'] = 'Lexical density';
 $string['lexicaldensity_help'] = 'The lexical density is a percentage that measures the structure and complexity of human communication in a language';
 $string['longwords'] = 'Long words';
 $string['longwordspersentence'] = 'Long words per sentence';
+$string['language_none'] = 'None';
+$string['language_en'] = 'English';
+$string['language_id'] = 'Indonesia';
 
 $string['maximumfilecount'] = 'Maximum number of files: {$a}';
 $string['maximumfilesize'] = 'Maximum file size: {$a}';
@@ -69,6 +72,10 @@ $string['pluginnameadding'] = 'Adding an Essay Similarity Checker question';
 $string['pluginnameediting'] = 'Editing an Essay Similarity Checker question';
 $string['pluginnamesummary'] = 'Allows an essay as a question response that will be graded automatically by comparing the similarity between the response and teacher answer key. The grade may be overridden later.';
 $string['privacy:metadata'] = 'The Essay Similarity Checker question type plugin does not store any personal data.';
+
+$string['questionlanguage'] = 'Question language';
+$string['questionlanguage_help'] = 'Specify the question language for pre-processing purpose to increase the accuracy of the auto grading. If your language does not listed here, select none. See the following link to know how to add your language';
+$string['questionlanguage_link'] = 'https://github.com/thoriqadillah/essaysimilarity'; //TODO: specify link for adding language
 
 $string['responseisnotoriginal'] = 'Please provide your own answer';
 $string['requiredfilecount'] = 'Required number of files: {$a}';

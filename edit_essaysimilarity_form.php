@@ -63,6 +63,14 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->setDefault($name, $this->get_default($name, 1));
     $mform->addHelpButton($name, $name, $plugin);
 
+    $name = 'questionlanguage';
+    $label = get_string($name, $plugin);
+    $mform->addElement('select', $name, $label, $this->language_options());
+    $mform->addHelpButton($name, $name, $plugin);
+    $mform->setType($name, PARAM_TEXT);
+    $mform->setDefault($name, $this->get_default($name, $this->get_constant('NO_LANG')));
+    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
+    
     $name = 'answerkey';
     $label = get_string($name, $plugin);
     $mform->addElement('editor', $name, $label, [], $this->editoroptions);
@@ -140,6 +148,7 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $names = [
       'autograding',
       'enableautograde',
+      'questionlanguage',
       'answerkey',
       'showanswerkey',
       'showfeedback',
@@ -162,6 +171,9 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $question->showanswerkey = $question->options->showanswerkey;
     $question->showfeedback = $question->options->showfeedback;
     $question->showtextstats = $question->options->showtextstats;
+
+    // Initialize fields that has text value in question language.
+    $question->questionlanguage = $question->options->questionlanguage;
 
     // Initialize fields that has HTML editor value.
     $question->answerkey = [
@@ -186,6 +198,25 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     }
 
     return $question;
+  }
+
+  private function language_options() {
+    global $CFG;
+
+    $dir = $CFG->dirroot.'/question/type/essaysimilarity/nlp/preprocessing/stopword/lang';
+    $plugin = $this->plugin_name();
+
+    // get all file from preprocessing/stopword/lang and make them as options
+    $options = ['none' => get_string('language_none', $plugin)];
+
+    $files = scandir($dir);
+    $files = array_splice($files, 2);
+    foreach ($files as $file) {
+      $lang = substr($file, 0, 2);
+      $options[$lang] = get_string('language_'.$lang, $plugin);
+    }
+
+    return $options;
   }
 
   /**

@@ -7,8 +7,9 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview4](pix/preview4.png)
 ## Features
 - Auto grading
-- Statistical text
+- Question language specific (for pre-processing purpose)
 - Answer key
+- Statistical text
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
 
 ## Installation
@@ -25,6 +26,8 @@ After that go to site administration page and it should shows that new plugin is
 
 ## Uninstall
 Delete the essaysimilarity folder inside your moodle
+## Add Your Language
+TODO
 
 ## License
 [GPL v3](https://github.com/thoriqadillah/essaysimilarity/blob/main/LICENSE)
