@@ -4,6 +4,7 @@ include('./../stemmer.php');
 
 /**
  * Stemming bahasa indonesia menggunakan algoritma Nazief dan Adriani
+ * Credit to @ilhamdp10, copied and modified from https://github.com/ilhamdp10/algoritma-stemming-nazief-adriani/blob/master/enhanced_CS.php
  */
 class id_stemmer implements stemmer {
   
@@ -195,7 +196,7 @@ class id_stemmer implements stemmer {
           }
         }
       }
-      
+
       /*------------end “be-”, ---------------------------------------------*/
       /*------------ Awalan “te-”, ---------------------------------------------*/
       if (preg_match('/^(te)\S{1,}/', $kata)) { // Jika awalan “te-”,
