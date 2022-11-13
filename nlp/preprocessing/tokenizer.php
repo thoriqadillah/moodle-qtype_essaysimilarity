@@ -31,10 +31,7 @@ class tokenizer {
     }
 
     $token = $stopword->remove_stopword($token, $stemmer);
-    $token = array_filter($token);
 
-    //TODO: transform the token with tf-idf
-    
     return is_int(key($token)) ? array_count_values($token) : $token;
   }
 

@@ -1,6 +1,7 @@
 <?php
 
 include('preprocessing/tokenizer.php');
+require_once('preprocessing/tfidf_transformer.php');
 
 class cosine_similarity {
 
@@ -9,9 +10,16 @@ class cosine_similarity {
 
   public function __construct($str1, $str2, $lang) {
     $tokenizer = new tokenizer();
-
+    
     $this->v1 = $tokenizer->tokenize($str1, $lang);
     $this->v2 = $tokenizer->tokenize($str2, $lang);
+
+    $sample = [$this->v1, $this->v2];
+    $transformer = new tfidf_transformer($sample);
+    $transformer->transform($sample);
+
+    $this->v1 = $sample[0];
+    $this->v2 = $sample[1];
   }
   
   /**
