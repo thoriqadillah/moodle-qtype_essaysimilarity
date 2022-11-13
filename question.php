@@ -27,7 +27,7 @@ defined("MOODLE_INTERNAL") || die();
 
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
-require_once($CFG->dirroot.'/question/type/essaysimilarity/similarity/cosine_similarity.php');
+require_once('nlp/cosine_similarity.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
