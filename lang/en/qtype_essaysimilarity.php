@@ -75,7 +75,7 @@ $string['privacy:metadata'] = 'The Essay Similarity Checker question type plugin
 
 $string['questionlanguage'] = 'Question language';
 $string['questionlanguage_help'] = 'Specify the question language for pre-processing purpose to increase the accuracy of the auto grading. If your language does not listed here, select none. See the following link to know how to add your language';
-$string['questionlanguage_link'] = 'https://github.com/thoriqadillah/essaysimilarity'; //TODO: specify link for adding language
+$string['questionlanguage_link'] = 'https://github.com/thoriqadillah/essaysimilarity#add-your-language';
 
 $string['responseisnotoriginal'] = 'Please provide your own answer';
 $string['requiredfilecount'] = 'Required number of files: {$a}';
