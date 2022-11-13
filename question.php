@@ -90,7 +90,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       $answerkeytext = core_text::strtolower($answerkeytext);
 
       //TODO: add dropdown option for language of the question
-      $sim = new cosine_similarity($answerkeytext, $responsetext, 'id');
+      $sim = new cosine_similarity($answerkeytext, $responsetext, 'en');
       $similarity = $sim->get_similarity();
     }
 
