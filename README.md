@@ -1,10 +1,12 @@
 # Essay Similarity Checker
 Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity, and uses the similarity to auto grading the question. The automatic grade can be manually overridden by the teacher
+
 ![preview1](pix/preview1.png)
 ![preview2](pix/preview2.png)
 ![preview3](pix/preview3.png)
+![preview4](pix/preview4.png)
 ## Features
-- Auto grading using cosine similarity
+- Auto grading
 - Statistical text
 - Answer key
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
