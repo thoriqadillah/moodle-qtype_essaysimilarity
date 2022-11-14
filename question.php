@@ -40,9 +40,10 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   /**
    * In situations where is_gradable_response() returns false, this method
    * should generate a description of what the problem is.
+   * @param array $response
    * @return string the message.
    */
-  public function get_validation_error(array $response) {
+  public function get_validation_error($response) {
     // check if we have a text answer
     if (empty($response['answer']) && empty($response['attachments'])) { 
       return get_string('noresponse', 'quiz');
@@ -168,7 +169,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    *      {@link question_attempt_step::get_qt_data()}.
    * @return array (float, integer) the fraction, and the state.
    */
-  public function grade_response(array $response) {
+  public function grade_response($response) {
     $response = $this->process_response($response);
 
     return [$response['autograde'], question_state::graded_state_for_fraction($response['autograde'])];
@@ -369,7 +370,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     // Detect syllables for single-vowels.
     $vowelcount = 0;
-    $vowels = array('a','e','i','o','u','y');
+    $vowels = ['a','e','i','o','u','y'];
     $str = str_replace($vowels, '', $str, $vowelcount);
     $count += $vowelcount;
 
@@ -384,7 +385,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   }
 
   static protected function get_syllable_counts() {
-    return array(
+    return [
       // final "e" as separate syllable
       'aborigine' => 5,
       'adobe' => 3,
@@ -537,6 +538,6 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       'tamale' => 3,
       'eurydice' => 4,
       'euterpe' => 3,
-    );
+    ];
   }
 }
