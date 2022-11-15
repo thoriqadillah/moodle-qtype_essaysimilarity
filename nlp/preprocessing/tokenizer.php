@@ -1,11 +1,7 @@
 <?php
 
-include('stopword/stopword.php');
-include('tfidf_transformer.php');
-
-include("stemmer/stemmer.php");
-include("stemmer/en/en.php");
-
+require_once('stopword/stopword.php');
+require_once('stemmer/stemmer.php');
 class tokenizer {
 
   const PATTERN = '/[\pZ\pC]+/u';
@@ -23,18 +19,16 @@ class tokenizer {
    */
   public function tokenize($str) {
     $str = $this->normalize($str);
-    $stopword = new stopword($this->lang);
-    
     $token = preg_split(self::PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
     
+    // we assume that stemmer implementation and stopword dictionary for certain language is present, or errors will be thrown
     if ($this->lang !== 'none') {
       require_once("stemmer/$this->lang/$this->lang.php");
 
-      $classname = $this->lang . '_stemmer';
-      if (class_exists($classname)) {
-        $stemmer = new $classname();
-      }
-  
+      $classname = $this->lang.'_stemmer';
+      $stemmer = new $classname();
+
+      $stopword = new stopword($this->lang);
       $token = $stopword->remove_stopword($token, $stemmer);
     }
 

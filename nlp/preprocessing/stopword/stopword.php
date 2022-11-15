@@ -5,10 +5,8 @@ include('../stemmer/stemmer.php');
 class stopword {
   protected $stopwords = [];
 
-  public function __construct($lang = 'none') {
-    if ($lang !== 'none') {
-      $this->stopwords = require("lang/$lang.php");
-    }
+  public function __construct($lang) {
+    $this->stopwords = require("lang/$lang.php");
   }
 
   /**
