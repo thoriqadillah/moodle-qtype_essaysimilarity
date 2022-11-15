@@ -9,6 +9,11 @@ include("stemmer/en/en.php");
 class tokenizer {
 
   const PATTERN = '/[\pZ\pC]+/u';
+  private $lang = 'none';
+
+  public function __construct($lang) {
+    $this->lang = $lang;
+  }
 
   /**
    * Whitespace tokenizer
@@ -16,17 +21,16 @@ class tokenizer {
    * @param string $str string to be tokenized
    * @return array $str tokenized string
    */
-  public function tokenize($str, $lang = 'none') {
-    
+  public function tokenize($str) {
     $str = $this->normalize($str);
-    $stopword = new stopword($lang);
+    $stopword = new stopword($this->lang);
     
     $token = preg_split(self::PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
     
-    if ($lang !== 'none') {
-      require_once("stemmer/$lang/$lang.php");
+    if ($this->lang !== 'none') {
+      require_once("stemmer/$this->lang/$this->lang.php");
 
-      $classname = $lang . '_stemmer';
+      $classname = $this->lang . '_stemmer';
       if (class_exists($classname)) {
         $stemmer = new $classname();
       }

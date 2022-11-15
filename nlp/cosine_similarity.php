@@ -8,13 +8,13 @@ class cosine_similarity {
   protected $v1;
   protected $v2;
 
-  public function __construct($str1, $str2, $lang) {
-    $tokenizer = new tokenizer();
+  public function __construct($answerkeytext, $responsetext, $lang) {
+    $tokenizer = new tokenizer($lang);
     
-    $this->v1 = $tokenizer->tokenize($str1, $lang);
-    $this->v2 = $tokenizer->tokenize($str2, $lang);
+    $tok_answerkey = $tokenizer->tokenize($answerkeytext);
+    $tok_response = $tokenizer->tokenize($responsetext);
 
-    $sample = [$this->v1, $this->v2];
+    $sample = [$tok_answerkey, $tok_response];
     $transformer = new tfidf_transformer($sample);
     $transformer->transform($sample);
 

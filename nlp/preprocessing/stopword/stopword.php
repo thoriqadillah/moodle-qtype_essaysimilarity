@@ -20,11 +20,10 @@ class stopword {
   public function remove_stopword($token, $stemmer) {
     $token = array_udiff($token, $this->stopwords, 'strcasecmp');
     
-    $processed = [];
-    foreach ($token as $tok) {
-      $processed[] = $stemmer->stem($tok);
+    foreach ($token as &$tok) {
+      $tok = $stemmer->stem($tok);
     }
 
-    return $processed;
+    return $token;
   }
 }
