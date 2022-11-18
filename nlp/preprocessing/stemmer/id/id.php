@@ -979,10 +979,40 @@ class id_stemmer implements stemmer {
     return $kata_asal;
   }
 
-  // Sepertinya untuk kata ganda seperti ciri-ciri => ciri belum diproses
+  private function is_plural($word) {
+    // -ku|-mu|-nya
+    // nikmat-Ku, etc
+    if (preg_match('/^(.*)-(ku|mu|nya|lah|kah|tah|pun)$/', $word, $words)) {
+      return strpos($words[1], '-') !== false;
+    }
+
+    return strpos($word, '-') !== false;
+  }
+
   public function stem($word) {
     // Jika Ada maka kata tersebut adalah kata dasar
     if ($this->cek_kamus($word)) return $word;
+
+    // stem kata plural
+    if ($this->is_plural($word)) {
+      preg_match('/^(.*)-(.*)$/', $word, $words);
+      if (!empty($words)) {
+
+        // malaikat-malaikat-nya -> malaikat malaikatnya
+        $suffix = $words[2];
+        if (in_array($suffix, ['ku', 'mu', 'nya', 'lah', 'kah', 'tah', 'pun']) &&
+        preg_match('/^(.*)-(.*)$/', $words[1], $words)) {
+          $words[2] .= $suffix;
+        }
+        
+        $stem1 = $this->stem($words[1]);
+        $stem2 = $this->stem($words[2]);
+        
+        if ($stem1 == $stem2) {
+          return $stem1;
+        }
+      }
+    }
 
     //jika tidak ada dalam kamus maka dilakukan stemming
     $word = $this->del_inflection_suffixes($word);
