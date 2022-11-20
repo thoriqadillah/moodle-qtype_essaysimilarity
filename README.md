@@ -24,8 +24,6 @@ Download the zip and extract it to the question/type inside your moodle root dir
 
 After that go to site administration page and it should shows that new plugin is present
 
-## Uninstall
-Delete the essaysimilarity folder inside your moodle
 ## Note
 This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
 ## Add Your Language
