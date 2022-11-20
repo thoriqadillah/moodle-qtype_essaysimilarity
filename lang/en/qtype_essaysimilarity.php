@@ -34,7 +34,7 @@ $string['datetime'] = '{$a->datetime}';
 
 $string['enableautograde'] = 'Enable auto grading';
 $string['enableautograde_help'] = 'If enabled, the answer of the student will be automatically graded';
-$string['explanationdatetime'] = '%Y %b %d (%a) at %H:%M';
+$string['explanationdatetime'] = '%d %b %Y at %H:%M';
 $string['explanationoverride'] = 'The grade for this essay was manually set to {$a->manualgrade}.';
 
 $string['fogindex'] = 'Fog index';
