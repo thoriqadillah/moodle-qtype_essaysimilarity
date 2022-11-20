@@ -1,5 +1,5 @@
 # Essay Similarity Checker
-Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity, and uses the similarity to auto grading the question. The automatic grade can be manually overridden by the teacher
+Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity algorithm, and uses the similarity to auto grade the question. The automatic grade can be manually overridden by the teacher
 
 ![preview1](pix/preview1.png)
 ![preview2](pix/preview2.png)
@@ -26,8 +26,10 @@ After that go to site administration page and it should shows that new plugin is
 
 ## Uninstall
 Delete the essaysimilarity folder inside your moodle
+## Note
+This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
 ## Add Your Language
-Pre-processing is pretty important to improve the accuracy of the similarity checker. For default, this plugin only support Indonesia and English. If your language is not detected in Question Language option and want to add your language, you need to do the following:
+Pre-processing is pretty important to improve the accuracy of the similarity checker. For default, this plugin only support Indonesia and English. If your language is not detected in Question Language option, you should choose `none` on the option. And if you want to add your language, you need to do the following:
 
 1. Add list of stopword of your language inside `essaysimilarity/nlp/preprocessing/stopword/lang`, and add a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language. For example, english is en, therefore the name is `en.php`. And inside the file, return an array of list of the stopword
 ```php
