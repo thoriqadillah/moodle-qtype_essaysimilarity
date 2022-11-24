@@ -283,6 +283,8 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
 
   /**
    * Fetch a constant attribute of qtype_essaysimilarity class inside "questiontype.php" file.
+   * @param string $name constant name
+   * @return int constant value
    */
   private function get_constant($name) {
     return constant("qtype_essaysimilarity::$name");
