@@ -989,29 +989,33 @@ class id_stemmer implements stemmer {
     return strpos($word, '-') !== false;
   }
 
+  private function stem_plural($word) {
+    preg_match('/^(.*)-(.*)$/', $word, $words);
+    if (!empty($words)) {
+
+      // malaikat-malaikat-nya -> malaikat malaikatnya
+      $suffix = $words[2];
+      if (in_array($suffix, ['ku', 'mu', 'nya', 'lah', 'kah', 'tah', 'pun']) &&
+      preg_match('/^(.*)-(.*)$/', $words[1], $words)) {
+        $words[2] .= $suffix;
+      }
+      
+      $stem1 = $this->stem($words[1]);
+      $stem2 = $this->stem($words[2]);
+
+      if ($stem1 == $stem2) {
+        return $stem2;
+      }
+    }
+  }
+
   public function stem($word) {
     // Jika Ada maka kata tersebut adalah kata dasar
     if ($this->cek_kamus($word)) return $word;
 
     // stem kata plural
     if ($this->is_plural($word)) {
-      preg_match('/^(.*)-(.*)$/', $word, $words);
-      if (!empty($words)) {
-
-        // malaikat-malaikat-nya -> malaikat malaikatnya
-        $suffix = $words[2];
-        if (in_array($suffix, ['ku', 'mu', 'nya', 'lah', 'kah', 'tah', 'pun']) &&
-        preg_match('/^(.*)-(.*)$/', $words[1], $words)) {
-          $words[2] .= $suffix;
-        }
-        
-        $stem1 = $this->stem($words[1]);
-        $stem2 = $this->stem($words[2]);
-        
-        if ($stem1 == $stem2) {
-          return $stem1;
-        }
-      }
+      return $this->stem_plural($word);
     }
 
     //jika tidak ada dalam kamus maka dilakukan stemming
