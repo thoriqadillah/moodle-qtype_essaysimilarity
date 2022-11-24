@@ -71,28 +71,11 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   }
 
   /**
-   * Add additional detail to the response
-   * @param array $response the response being passed
-   * @return array $response
+   * Process text stats of the response and then save/update them in database
+   * @param string $responsetext the response in plain text
    */
-  public function process_response($response) {
-    global $CFG, $USER, $DB;
-    
-    $responsetext = '';
-    $answerkeytext = '';
-    $similarity = 0.0;
-
-    // get the plain text of the response and answer key
-    if (!empty($response['answer'])) {
-      $responsetext = $this->to_plaintext($response['answer'], $response['format']);
-      $responsetext = core_text::strtolower($responsetext);
-      
-      $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
-      $answerkeytext = core_text::strtolower($answerkeytext);
-
-      $sim = new cosine_similarity($answerkeytext, $responsetext, $this->questionlanguage);
-      $similarity = $sim->get_similarity();
-    }
+  public function get_and_save_textstats($responsetext) {
+    global $USER, $DB;
 
     // get all text stats and then save to DB according what user choose in form editing
     $textstats_table = 'question_answer_stats';
@@ -114,53 +97,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     } else {
       $DB->insert_record($textstats_table, $textstats);
     }
-    
-    $result = [
-      'text' => $responsetext,
-      'answerkey' => $answerkeytext,
-      'stats' => $stats,
-      'autograde' => $similarity
-    ];
-    
-    // get the attachments if any
-    if (isset($response['attachments'])) {
-      $result['attachments'] = $response['attachments'];
-    }
-
-    // get the plagiarsm
-    $plagiarism = [];
-    $plagiarismparams = [];
-
-    if ($CFG->enableplagiarism) {
-      require_once($CFG->dirroot.'/lib/plagiarismlib.php');
-
-      list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
-      $plagiarismparams = [
-        'userid' => $USER->id,
-        'text' => $responsetext
-      ];
-
-      if ($course) {
-        $plagiarismparams['course'] = $course;
-      }
-
-      if ($cm) {
-        $plagiarismparams['cmid'] = $cm->id;
-        $plagiarismparams[$cm->modname] = $cm->instance;
-      }
-
-      $files = empty($response) || empty($response['attachments']) ? [] : $response['attachments']->get_files();
-      $plagiarism[] = plagiarism_get_links($plagiarismparams);
-      foreach ($files as $file) {
-        $plagiarism[] = plagiarism_get_links($plagiarismparams + ['file' => $file]);
-      }
-
-      $result['plagiarism'] = $plagiarism;
-    }
-
-    return $result;    
   }
-
+  
   /**
    * Grade a response to the question, returning a fraction between
    * get_min_fraction() and get_max_fraction(), and the corresponding {@link question_state}
@@ -170,9 +108,51 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response($response) {
-    $response = $this->process_response($response);
+    $responsetext = $this->to_plaintext($response['answer'], $response['format']);
+    $responsetext = core_text::strtolower($responsetext);
 
-    return [$response['autograde'], question_state::graded_state_for_fraction($response['autograde'])];
+    $this->get_and_save_textstats($responsetext);
+    
+    $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
+    $answerkeytext = core_text::strtolower($answerkeytext);
+
+    $sim = new cosine_similarity($answerkeytext, $responsetext, $this->questionlanguage);
+    $similarity = $sim->get_similarity();
+
+    return [$similarity, question_state::graded_state_for_fraction($similarity)];
+  }
+
+  public function get_plagiarism($response) {
+    global $CFG, $PAGE;
+    require_once($CFG->dirroot.'/lib/plagiarismlib.php');
+
+    $plagiarism = [];
+    $plagiarismparams = [];
+
+    if (!$CFG->enableplagiarism) return $plagiarism;
+
+    list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
+    $plagiarismparams = [
+      'userid' => $USER->id,
+      'text' => $responsetext
+    ];
+
+    if ($course) {
+      $plagiarismparams['course'] = $course;
+    }
+
+    if ($cm) {
+      $plagiarismparams['cmid'] = $cm->id;
+      $plagiarismparams[$cm->modname] = $cm->instance;
+    }
+
+    $files = empty($response) || empty($response['attachments']) ? [] : $response['attachments']->get_files();
+    $plagiarism[] = plagiarism_get_links($plagiarismparams);
+    foreach ($files as $file) {
+      $plagiarism[] = plagiarism_get_links($plagiarismparams + ['file' => $file]);
+    }
+
+    return $plagiarism;
   }
 
   /**

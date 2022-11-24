@@ -41,8 +41,6 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
   /** @var question_display_options */
   private $displayoptions = null;
 
-  private $response = [];
-  
   /**
    * Generate the display of the formulation part of the question. This is the
    * area that contains the quetsion text, and the controls for students to
@@ -54,15 +52,9 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
    * @return string HTML fragment.
    */
   public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-    global $PAGE;
-
     $this->displayoptions = $options;
 
     $question = $qa->get_question();
-    $response = $qa->get_last_qt_data(); 
-    
-    // to process additional information about the response of the student 
-    $this->response = $question->process_response($response);
 
     // format question text
     $qtext = $question->format_questiontext($qa);
@@ -145,14 +137,20 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     }
 
     // show text statistic if user choose so and stats item is selected at least one
+    global $DB, $USER;
     $showtextstats = $show[$question->showtextstats] && strlen(trim($question->textstatitems));
     if ($showtextstats) {
       $strmanager = get_string_manager();
       
       $table = new html_table();
       $table->attributes['class'] = 'generaltable essaysimilarity review stats';
-
+      
       $statsitem = explode(',', $question->textstatitems);
+      $textstats = $DB->get_record('question_answer_stats', [
+        'questionid' => $question->id, 
+        'userid' => $USER->id
+      ]);
+
       foreach ($statsitem as $item) {
         $label = get_string($item, $plugin_name);
 
@@ -160,7 +158,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
           $label .= $this->help_icon($item, $plugin_name);
         }
 
-        $value = isset($this->response['stats']->$item) ? $this->response['stats']->$item : 0.0;
+        $value = isset($textstats->$item) ? $textstats->$item : 0.0;
         $value = number_format((float) $value);
         $value .= $item == 'lexicaldensity' ? '%' : ''; // add percent symbol if the item is lexical density
 
@@ -174,11 +172,13 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     }
 
     // display plagiarism links if any
-    if (isset($this->response['plagiarism'])) {
+    $response = $qa->get_last_qt_data(); 
+    $plagiarism_content = $question->get_plagiarism($response);
+    if (!empty($plagiarism_content)) {
       $output .= html_writer::tag('h5', get_string('plagiarismcheck', $plugin_name));
   
       $plagiarism = [];
-      foreach ($this->response['plagiarism'] as $link) {
+      foreach ($plagiarism_content as $link) {
         $plagiarism[] = html_writer::tag('a', $link, ['href' => $link]);
       }
 
