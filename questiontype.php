@@ -132,10 +132,6 @@ class qtype_essaysimilarity extends question_type {
   }
 
   public function delete_question($questionid, $contextid) {
-    global $DB;
-
-    $plugintable = 'qtype_essaysimilarity_option';
-    $DB->delete_records($plugintable, ['questionid' => $questionid]);
     parent::delete_question($questionid, $contextid);
   }
 
