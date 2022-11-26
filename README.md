@@ -15,7 +15,7 @@ Is a moodle question type plugin that compares the similarity between student's 
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
 
 ## Installation
-You can choose the following method that suits yout to install the plugin
+You can choose the following method that suits you to install the plugin
 ### Using Terminal
 Go to your moodle root directory and execute the following command
 ```
