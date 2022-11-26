@@ -28,7 +28,7 @@
         <FIELD NAME="textstatitems" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="A comma separted list of auto-feedback items to be displayed"/>
         <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
         <FIELD NAME="responsetemplateformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsetemplate."/>
-        <FIELD NAME="questionlanguage" TYPE="varchar" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Question language for preprocessing"/>
+        <FIELD NAME="questionlanguage" TYPE="char" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Question language for preprocessing"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
