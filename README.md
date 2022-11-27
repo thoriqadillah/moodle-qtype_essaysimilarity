@@ -1,6 +1,6 @@
 # Essay Similarity Checker
 Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity algorithm, and uses the similarity to auto grade the answer. The automatic grade can be manually overridden by the teacher
-
+## Previews
 ![preview1](pix/preview1.png)
 ![preview2](pix/preview2.png)
 ![preview3](pix/preview3.png)
@@ -9,7 +9,7 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview6](pix/preview6.png)
 ## Features
 - Auto grading
-- Question language specific (for pre-processing purpose)
+- Support every language (see note)
 - Answer key
 - Statistical text
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
@@ -27,9 +27,10 @@ Download the zip and extract it to the question/type inside your moodle root dir
 After that go to site administration page and it should shows that new plugin is present
 
 ## Note
-This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
+- This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
+- In general, this plugin supports every language, but this plugin will be more accurate if it has the implementation of specific language for pre-processing. You can select `none` if your language is not detected in question language option
 ## Add Your Language
-Pre-processing is pretty important to improve the accuracy of the similarity checker. For default, this plugin only support Indonesia and English. If your language is not detected in Question Language option, you should choose `none` on the option. And if you want to add your language, you need to do the following:
+Pre-processing is pretty important to improve the accuracy of the similarity checker. Pre-processing will clean the documents such as removing stopwords, stem the words and weight the value of each word so the documents we are comparing is in the same class. If you select `none`, it will only do the weighting for each word. If you want to add your language, you need to do the following:
 
 1. Add list of stopword of your language inside `essaysimilarity/nlp/preprocessing/stopword/lang`, and add a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language. For example, english is en, therefore the name is `en.php`. And inside the file, return an array of list of the stopword
 ```php

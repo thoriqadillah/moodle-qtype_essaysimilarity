@@ -32,9 +32,7 @@ require_once('nlp/cosine_similarity.php');
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
   public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
-    if ($this->enableautograde) return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
-
-    return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
+    return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
   }
   
   /**

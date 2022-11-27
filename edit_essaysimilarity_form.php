@@ -56,26 +56,18 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->addElement('header', $header_name, $header_label);
     $mform->setExpanded($header_name, true);
 
-    $name = 'enableautograde';
-    $label = get_string($name, $plugin);
-    $mform->addElement('selectyesno', $name, $label);
-    $mform->setType($name, PARAM_INT);
-    $mform->setDefault($name, $this->get_default($name, 1));
-    $mform->addHelpButton($name, $name, $plugin);
-
     $name = 'questionlanguage';
     $label = get_string($name, $plugin);
     $mform->addElement('select', $name, $label, $this->language_options());
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_TEXT);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('NO_LANG')));
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
     
     $name = 'answerkey';
     $label = get_string($name, $plugin);
     $mform->addElement('editor', $name, $label, [], $this->editoroptions);
     $mform->addHelpButton($name, $name, $plugin);
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
+    $mform->addRule($name, get_string('requiredanswerkey', $plugin), 'required' , '', 'client');
 
     $name = 'showanswerkey';
     $label = get_string($name, $plugin);
@@ -83,7 +75,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_NONE')));
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'showfeedback';
     $label = get_string($name, $plugin);
@@ -91,7 +82,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_TEACHERS_AND_STUDENTS')));
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'showtextstats';
     $label = get_string($name, $plugin);
@@ -99,7 +89,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_INT);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('SHOW_TEACHERS_ONLY')));
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
 
     $name = 'textstatitems';
     $label = get_string($name, $plugin);
@@ -110,7 +99,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     }
     $mform->addGroup($elements, $name, $label, html_writer::empty_tag('br'), false);
     $mform->addHelpButton($name, $name, $plugin);
-    $mform->disabledIf($name, 'enableautograde', 'eq', 0);
     $mform->disabledIf($name, 'showtextstats', 'eq', $this->get_constant('SHOW_NONE'));
 
     foreach ($options as $value => $text) {
@@ -147,7 +135,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $prevsection = 'responseoptions';
     $names = [
       'autograding',
-      'enableautograde',
       'questionlanguage',
       'answerkey',
       'showanswerkey',
@@ -167,7 +154,6 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     if (empty($question->options)) return $question;
 
     // Initialize fields that has numeric value.
-    $question->enableautograde = $question->options->enableautograde;
     $question->showanswerkey = $question->options->showanswerkey;
     $question->showfeedback = $question->options->showfeedback;
     $question->showtextstats = $question->options->showtextstats;

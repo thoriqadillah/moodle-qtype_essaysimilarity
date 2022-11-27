@@ -19,7 +19,6 @@
         <FIELD NAME="filetypeslist" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="file types that may be submitted with response"/>
         <FIELD NAME="graderinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading."/>
         <FIELD NAME="graderinfoformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for graderinfo."/>
-        <FIELD NAME="enableautograde" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Nonzero if auto-grading is enabled"/>
         <FIELD NAME="showfeedback" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should the actionable feedback be shown on the grading and review pages?"/>
         <FIELD NAME="answerkey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Key answer provided by the teacher"/>
         <FIELD NAME="answerkeyformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for answerkey."/>

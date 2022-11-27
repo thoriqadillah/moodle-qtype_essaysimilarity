@@ -32,8 +32,6 @@ $string['charspersentence'] = 'Characters per sentence';
 
 $string['datetime'] = '{$a->datetime}';
 
-$string['enableautograde'] = 'Enable auto grading';
-$string['enableautograde_help'] = 'If enabled, the answer of the student will be automatically graded';
 $string['explanationdatetime'] = '%d %b %Y at %H:%M';
 $string['explanationoverride'] = 'The grade for this essay was manually set to {$a->manualgrade}.';
 
@@ -79,6 +77,7 @@ $string['questionlanguage_link'] = 'https://github.com/thoriqadillah/essaysimila
 
 $string['responseisnotoriginal'] = 'Please provide your own answer';
 $string['requiredfilecount'] = 'Required number of files: {$a}';
+$string['requiredanswerkey'] = 'Answer key is required';
 
 $string['sentences'] = 'Sentences';
 $string['sentencesperparagraph'] = 'Sentences per paragraph';
