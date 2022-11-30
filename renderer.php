@@ -148,7 +148,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       $statsitem = explode(',', $question->textstatitems);
       $textstats = $DB->get_record('question_answer_stats', [
         'questionid' => $question->id, 
-        'userid' => $USER->id
+        'userid' => $step->get_user_id()
       ]);
 
       foreach ($statsitem as $item) {
