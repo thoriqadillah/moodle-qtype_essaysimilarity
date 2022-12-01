@@ -37,6 +37,11 @@ class qtype_essaysimilarity extends question_type {
   const SHOW_TEACHERS_ONLY         = 2;
   const SHOW_TEACHERS_AND_STUDENTS = 3;
 
+  const DEFAULT_UPPER_CORRECTNESS = 0.99;
+  const DEFAULT_LOWER_CORRECTNESS = 0.01;
+
+  const EMPTY = '';
+
   /**
    * Constant value for question language options
    */
@@ -70,6 +75,8 @@ class qtype_essaysimilarity extends question_type {
       "responsetemplate",
       "responsetemplateformat",
       "questionlanguage",
+      "upper_correctness",
+      "lower_correctness",
     ];
   }
 
@@ -107,7 +114,7 @@ class qtype_essaysimilarity extends question_type {
       "attachments"             => $question->attachments,
       "attachmentsrequired"     => $question->attachmentsrequired,
       "maxbytes"                => isset($question->maxbytes) ? $question->maxbytes : 0,
-      "filetypeslist"           => isset($question->filetypeslist) ? $question->filetypeslist : '',
+      "filetypeslist"           => isset($question->filetypeslist) ? $question->filetypeslist : self::EMPTY,
       "graderinfo"              => $graderinfo,
       "graderinfoformat"        => $question->graderinfo['format'],
       "showfeedback"            => $question->showfeedback,
@@ -116,9 +123,11 @@ class qtype_essaysimilarity extends question_type {
       "showanswerkey"           => $question->showanswerkey,
       "showtextstats"           => $question->showtextstats,
       "textstatitems"           => $textstatitems,
-      "responsetemplate"        => isset($question->responsetemplate['text']) ? $question->responsetemplate['text'] : '',
+      "responsetemplate"        => isset($question->responsetemplate['text']) ? $question->responsetemplate['text'] : self::EMPTY,
       "responsetemplateformat"  => isset($question->responsetemplate['format']) ? $question->responsetemplate['format'] : 0,
       "questionlanguage"        => isset($question->questionlanguage) ? $question->questionlanguage : self::NO_LANG,
+      "upper_correctness"       => $question->upper_correctness ? $question->upper_correctness : self::DEFAULT_UPPER_CORRECTNESS,
+      "lower_correctness"       => $question->lower_correctness ? $question->lower_correctness : self::DEFAULT_LOWER_CORRECTNESS,
     ];
 
     if ($oldquestion) {
@@ -158,18 +167,20 @@ class qtype_essaysimilarity extends question_type {
       "attachments"             => 0,
       "attachmentsrequired"     => 0,
       "maxbytes"                => 0,
-      "filetypeslist"           => '',
-      "graderinfo"              => '',
+      "filetypeslist"           => self::EMPTY,
+      "graderinfo"              => self::EMPTY,
       "graderinfoformat"        => 0,
       "showfeedback"            => self::SHOW_TEACHERS_AND_STUDENTS,
-      "answerkey"               => '',
+      "answerkey"               => self::EMPTY,
       "answerkeyformat"         => 1,
       "showanswerkey"           => self::SHOW_NONE,
       "showtextstats"           => self::SHOW_TEACHERS_ONLY,
-      "textstatitems"           => '',
-      "responsetemplate"        => '',
+      "textstatitems"           => self::EMPTY,
+      "responsetemplate"        => self::EMPTY,
       "responsetemplateformat"  => 0,
-      "questionlanguage"        => self::NO_LANG
+      "questionlanguage"        => self::NO_LANG,
+      "upper_correctness"       => self::DEFAULT_UPPER_CORRECTNESS,
+      "lower_correctness"       => self::DEFAULT_LOWER_CORRECTNESS,
     ];
   }
 

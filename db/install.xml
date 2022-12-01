@@ -28,6 +28,8 @@
         <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
         <FIELD NAME="responsetemplateformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The text format for responsetemplate."/>
         <FIELD NAME="questionlanguage" TYPE="char" LENGTH="4" NOTNULL="false" SEQUENCE="false" COMMENT="Question language for preprocessing"/>
+        <FIELD NAME="upper_correctness" TYPE="number" LENGTH="4" DECIMALS="2" DEFAULT="0.01" NOTNULL="false" SEQUENCE="false" COMMENT="Upper threshold for similarity percentage that will be marked as correct answer"/>
+        <FIELD NAME="lower_correctness" TYPE="number" LENGTH="4" DECIMALS="2" DEFAULT="0.99" NOTNULL="false" SEQUENCE="false" COMMENT="Lower threshold for similarity percentage that will be marked as wrong answer"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

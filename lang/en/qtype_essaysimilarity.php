@@ -29,6 +29,10 @@ $string['answerkey'] = 'Answer key';
 
 $string['chars'] = 'Characters';
 $string['charspersentence'] = 'Characters per sentence';
+$string['upper_correctness'] = 'Correctness upper threshold';
+$string['upper_correctness_help'] = 'Upper threshold ranged 0.01 - 0.99 for similarity percentage that will be marked as correct answer (has green color in review page) if the percentage is above this threshold. Leave empty to use default value (0.99)';
+$string['lower_correctness'] = 'Correctness lower threshold';
+$string['lower_correctness_help'] = 'Lower threshold ranged 0.01 - 0.99 for similarity percentage that will be marked as wrong answer (has red color in review page) if the percentage is below this threshold. Leave empty to use default value (0.01)';
 
 $string['datetime'] = '{$a->datetime}';
 
