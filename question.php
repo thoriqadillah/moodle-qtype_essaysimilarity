@@ -72,7 +72,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * Process text stats of the response and then save/update them in database
    * @param string $responsetext the response in plain text
    */
-  public function get_and_save_textstats($responsetext) {
+  public function get_and_save_textstats($responsetext, $nosave = false) {
     global $USER, $DB;
 
     // get all text stats and then save to DB according what user choose in form editing
@@ -89,12 +89,20 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       $textstats->$item = $stats->$item;
     }
 
+    if ($nosave) return $textstats;
+
     if ($oldtextstats) {
       $textstats->id = $oldtextstats->id;
       $DB->update_record($textstats_table, $textstats);
     } else {
       $DB->insert_record($textstats_table, $textstats);
     }
+
+    return $textstats;
+  }
+
+  public function get_textstats($responsetext) {
+    return $this->get_and_save_textstats($responsetext, true);
   }
   
   /**
@@ -182,7 +190,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @param int $format Format of the text
    * @return string
    */
-  private function to_plaintext($text, $format) {
+  public function to_plaintext($text, $format) {
     if (empty($text)) return '';
 
     $plaintext = question_utils::to_plain_text($text, $format, ['para' => false]);

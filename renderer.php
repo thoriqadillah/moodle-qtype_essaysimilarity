@@ -146,10 +146,9 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       $table->attributes['class'] = 'generaltable essaysimilarity review stats';
       
       $statsitem = explode(',', $question->textstatitems);
-      $textstats = $DB->get_record('question_answer_stats', [
-        'questionid' => $question->id, 
-        'userid' => $step->get_user_id()
-      ]);
+      $response = $qa->get_last_qt_data();
+      $response = $question->to_plaintext($response['answer'], $response['format']);
+      $textstats = $question->get_textstats($response);
 
       foreach ($statsitem as $item) {
         $label = get_string($item, $plugin_name);
