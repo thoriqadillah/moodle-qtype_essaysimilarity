@@ -56,12 +56,25 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $mform->addElement('header', $header_name, $header_label);
     $mform->setExpanded($header_name, true);
 
+    $name = 'upper_correctness';
+    $label = get_string($name, $plugin);
+    $mform->addElement('text', $name, $label);
+    $mform->addHelpButton($name, $name, $plugin);
+    $mform->setType($name, PARAM_FLOAT);
+
+    $name = 'lower_correctness';
+    $label = get_string($name, $plugin);
+    $mform->addElement('text', $name, $label);
+    $mform->addHelpButton($name, $name, $plugin);
+    $mform->setType($name, PARAM_FLOAT);
+
     $name = 'questionlanguage';
     $label = get_string($name, $plugin);
     $mform->addElement('select', $name, $label, $this->language_options());
     $mform->addHelpButton($name, $name, $plugin);
     $mform->setType($name, PARAM_TEXT);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('NO_LANG')));
+    
     
     $name = 'answerkey';
     $label = get_string($name, $plugin);
@@ -135,6 +148,8 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $prevsection = 'responseoptions';
     $names = [
       'autograding',
+      'upper_correctness',
+      'lower_correctness',
       'questionlanguage',
       'answerkey',
       'showanswerkey',
@@ -157,6 +172,8 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $question->showanswerkey = $question->options->showanswerkey;
     $question->showfeedback = $question->options->showfeedback;
     $question->showtextstats = $question->options->showtextstats;
+    $question->upper_correctness = $question->options->upper_correctness;
+    $question->lower_correctness = $question->options->lower_correctness;
 
     // Initialize fields that has text value in question language.
     $question->questionlanguage = $question->options->questionlanguage;

@@ -125,7 +125,17 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $sim = new cosine_similarity($answerkeytext, $responsetext, $this->questionlanguage);
     $similarity = $sim->get_similarity();
 
-    return [$similarity, question_state::graded_state_for_fraction($similarity)];
+    $state = null;
+    
+    if ($similarity > $this->upper_correctness) {
+      $state = question_state::$gradedright;
+    } else if ($similarity < $this->lower_correctness) {
+      $state = question_state::$gradedwrong;
+    } else {
+      $state = question_state::$gradedpartial;
+    }
+
+    return [$similarity, $state];
   }
 
   public function get_plagiarism($response) {
