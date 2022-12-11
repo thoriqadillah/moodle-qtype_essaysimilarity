@@ -9,7 +9,7 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview6](pix/preview6.png)
 ## Features
 - Auto grading
-- Support every language (see note)
+- Support every language (see notes)
 - Answer key
 - Statistical text
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
@@ -26,7 +26,7 @@ Download the zip and extract it to the question/type inside your moodle root dir
 
 After that go to site administration page and it should shows that new plugin is present
 
-## Note
+## Notes
 - This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
 - In general, this plugin supports every language, but this plugin will be more accurate if it has the implementation of specific language for pre-processing. You can select `none` if your language is not detected in question language option
 ## Add Your Language
