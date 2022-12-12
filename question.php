@@ -28,6 +28,8 @@ defined("MOODLE_INTERNAL") || die();
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
+require_once('nlp/preprocessing/tokenizer.php');
+require_once('nlp/preprocessing/tfidf_transformer.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -104,6 +106,19 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   public function get_textstats($responsetext) {
     return $this->get_and_save_textstats($responsetext, true);
   }
+
+  private function tokenize($answerkeytext, $responsetext, $lang) {
+    $tokenizer = new tokenizer($lang);
+    
+    $tok_answerkey = $tokenizer->tokenize($answerkeytext);
+    $tok_response = $tokenizer->tokenize($responsetext);
+
+    $sample = [$tok_answerkey, $tok_response];
+    $transformer = new tfidf_transformer($sample);
+    $transformer->transform($sample);
+
+    return $sample;
+  }
   
   /**
    * Grade a response to the question, returning a fraction between
@@ -122,8 +137,10 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $answerkeytext = core_text::strtolower($answerkeytext);
 
-    $sim = new cosine_similarity($answerkeytext, $responsetext, $this->questionlanguage);
-    $similarity = $sim->get_similarity();
+    list($tok_answerkey, $tok_response) = $this->tokenize($answerkeytext, $responsetext, $this->questionlanguage);
+
+    $ts_ss = new cosine_similarity($tok_answerkey, $tok_response);
+    $similarity = $ts_ss->get_similarity();
 
     $state = null;
     
