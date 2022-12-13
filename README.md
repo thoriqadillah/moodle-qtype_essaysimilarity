@@ -1,5 +1,5 @@
-# Essay Similarity Checker (WIP)
-Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity algorithm, and uses the similarity to auto grade the answer. The automatic grade can be manually overridden by the teacher
+# Essay Similarity
+Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity (main branch) or TS-SS ([ts-ss branch](https://github.com/thoriqadillah/essaysimilarity/tree/ts-ss)) algorithm, and uses the similarity to auto grade the answer. The automatic grade can be manually overridden by the teacher
 ## Previews
 ![preview1](pix/preview1.png)
 ![preview2](pix/preview2.png)
