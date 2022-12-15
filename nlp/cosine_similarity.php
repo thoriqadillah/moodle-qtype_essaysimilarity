@@ -1,8 +1,4 @@
 <?php
-
-require_once('preprocessing/tokenizer.php');
-require_once('preprocessing/tfidf_transformer.php');
-
 class cosine_similarity {
 
   protected $v1;
