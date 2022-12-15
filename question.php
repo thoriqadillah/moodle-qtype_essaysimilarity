@@ -139,8 +139,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     list($tok_answerkey, $tok_response) = $this->tokenize($answerkeytext, $responsetext, $this->questionlanguage);
 
-    $ts_ss = new cosine_similarity($tok_answerkey, $tok_response);
-    $similarity = $ts_ss->get_similarity();
+    $cossim = new cosine_similarity($tok_answerkey, $tok_response);
+    $similarity = $cossim->get_similarity();
 
     $state = null;
     

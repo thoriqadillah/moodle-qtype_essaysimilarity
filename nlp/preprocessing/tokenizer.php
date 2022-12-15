@@ -32,7 +32,7 @@ class tokenizer {
       $token = $stopword->remove_stopword($token, $stemmer);
     }
 
-    return is_int(key($token)) ? array_count_values($token) : $token;
+    return array_count_values($token);
   }
 
   /**
