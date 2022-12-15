@@ -107,7 +107,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     return $this->get_and_save_textstats($responsetext, true);
   }
 
-  private function tokenize($answerkeytext, $responsetext, $lang) {
+  private function preprocess($answerkeytext, $responsetext, $lang) {
     $tokenizer = new tokenizer($lang);
     
     $tok_answerkey = $tokenizer->tokenize($answerkeytext);
@@ -137,7 +137,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $answerkeytext = core_text::strtolower($answerkeytext);
 
-    list($tok_answerkey, $tok_response) = $this->tokenize($answerkeytext, $responsetext, $this->questionlanguage);
+    list($tok_answerkey, $tok_response) = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
 
     $cossim = new cosine_similarity($tok_answerkey, $tok_response);
     $similarity = $cossim->get_similarity();
