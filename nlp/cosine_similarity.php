@@ -1,4 +1,5 @@
 <?php
+
 class cosine_similarity {
 
   protected $v1;
@@ -8,6 +9,24 @@ class cosine_similarity {
     $this->v1 = $tok_answerkey;
     $this->v2 = $tok_response;
   }
+
+  private function dot() {
+    $prod = 0.0;
+    foreach ($this->v1 as $i => $xi) {
+      $prod += $xi * $this->v2[$i];
+    }
+
+    return $prod;
+  }
+
+  private function magintude($vect): float {
+    $magnitude = 0.0;
+    foreach ($vect as $v) {
+      $magnitude += $v * $v;
+    }
+
+    return sqrt($magnitude);
+  }
   
   /**
    * Get the similarity between two string
@@ -15,26 +34,9 @@ class cosine_similarity {
    * @return float percentage of the similarity
    */
   public function get_similarity() {
-    $prod = 0.0;
-    $v1_norm = 0.0;
-    foreach ($this->v1 as $i => $xi) {
-      if (isset($this->v2[$i])) {
-        $prod += $xi * $this->v2[$i];
-      }
-
-      $v1_norm += $xi * $xi;
-    }
-
-    $v1_norm = sqrt($v1_norm);
-    if ($v1_norm === 0) return 0.00;
-    
-    $v2_norm = 0.0;
-    foreach ($this->v2 as $i => $xi) {
-      $v2_norm += $xi * $xi;
-    }
-
-    $v2_norm = sqrt($v2_norm);
-    if ($v2_norm === 0) return 0.00;
+    $prod = $this->dot();
+    $v1_norm = $this->magintude($this->v1);
+    $v2_norm = $this->magintude($this->v2);
 
     return $prod / ($v1_norm * $v2_norm);
   }

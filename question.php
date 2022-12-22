@@ -110,8 +110,12 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   private function preprocess($answerkeytext, $responsetext, $lang) {
     $tokenizer = new tokenizer($lang);
     
-    $tok_answerkey = $tokenizer->tokenize($answerkeytext);
-    $tok_response = $tokenizer->tokenize($responsetext);
+    list($counted_answerkey, $raw_answerkey) = $tokenizer->tokenize($answerkeytext);
+    list($counted_response, $raw_response) = $tokenizer->tokenize($responsetext);
+
+    $merged = array_merge($raw_answerkey, $raw_response);
+    $tok_answerkey = array_replace($merged, $counted_answerkey);
+    $tok_response = array_replace($merged, $counted_response);
 
     $sample = [$tok_answerkey, $tok_response];
     $transformer = new tfidf_transformer($sample);

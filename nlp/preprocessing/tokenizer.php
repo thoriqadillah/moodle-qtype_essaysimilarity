@@ -32,14 +32,19 @@ class tokenizer {
       $token = $stopword->remove_stopword($token, $stemmer);
     }
 
-    return array_count_values($token);
+    $raw = array_flip($token);
+    $raw = array_map(function() {
+      return 0;
+    }, $raw);
+    
+    return [array_count_values($token), $raw];
   }
 
   /**
    * Normalize the string from special characters and symbols
    */
   protected function normalize($str) {
-    $str = preg_replace('/[^a-z0-9 -]/im', ' ', $str);
+    $str = preg_replace('/[^a-z -]/im', ' ', $str);
     $str = preg_replace('/( +)/im', ' ', $str);
 
     return trim($str);
