@@ -4,7 +4,17 @@ use mod_bigbluebuttonbn\instance;
 
 class matrix {
 
-  const EPS = 2.22045e-016;
+  private $EPS = 2.2204460492503E-16;
+  private $TOL;
+  private $matrix = [];
+
+  /**
+   * @param array $matrix a multi-dimensional array
+   */
+  public function __construct($matrix) {
+    $this->matrix = $matrix;
+    $this->TOL = 1e-64 / $this->EPS;
+  }
 
   /**
 	 * Matrix multiplication
@@ -89,17 +99,6 @@ class matrix {
     return $neo_matrix;
   }
 
-  /**
-   * Sign
-   * 
-   * @param int $a
-   * @param int $b
-   * @return int
-   */
-  private function sign($a, $b) {
-    return $b >= 0 ? abs($a) : -abs($a);
-  }
-
   private function pythag($a, $b) {
     $a = abs($a);
     $b = abs($b);
@@ -120,307 +119,230 @@ class matrix {
    * @param array $matrix
    * @return array
    */
-  public function svd($matrix) {
-    // conver array key from string to numeric
-    foreach ($matrix as &$mt) {
-      $mt = array_values($mt);
+  public function svd() {
+    // Convert array key from string to numeric
+    foreach ($this->matrix as &$matrix) {
+      $matrix = array_values($matrix);
     }
 
-    $m = count($matrix);
-    $n = count($matrix[0]);
+    $m = count($this->matrix);
+    $n = count($this->matrix[0]);
 
-    $U = $this->construct($matrix, $m, $n);
-    $V = $this->construct($matrix, $m, $n);
+    // Copy matrix to $U
+    $U = $this->construct($this->matrix, $m, $n);
+    
+    // Initialize $Q and $V
+    $Q = array_fill(0, $n, 0);
+    $V = array_fill(0, $n, array_fill(0, $n, 0));
 
-    //===== Decomposing phase ======
+    $e = array_fill(0, $n, 0);
+    $g = 0;
+    $x = 0;
 
-    // Householder reduction to bidiagonal form.
-    $g = $scale = $anorm = 0.0;
-    $i = 0;
-    for($i = 0; $i < $n; $i++) {
-      $l = $i + 2;
-      $rv1[$i] = $scale * $g;
-      $g = $s = $scale = 0.0;
+    for ($i = 0; $i < $n; $i++) {
+      $e[$i] = $g;
+      $s = 0;
+      $l = $i + 1;
 
-      if ($i < $m) {
-        for($k = $i; $k < $m; $k++) $scale += abs($U[$k][$i]);
+      for ($j = $i; $j < $m; $j++) {
+        $s += pow($U[$j][$i], 2);
+      }
 
-        if ($scale != 0.0) {
-          for($k = $i; $k < $m; $k++) {
-            $U[$k][$i] /= $scale;
-            $s += $U[$k][$i] * $U[$k][$i];
+      if ($s < $this->TOL) $g = 0;
+      else {
+        $f = $U[$i][$i];
+        $g = $f < 0 ? sqrt($s) : -sqrt($s);
+        $h = $f*$g - $s;
+        $U[$i][$i] = $f - $g;
+
+        for ($j = $l; $j < $n; $j++) {
+          $s = 0;
+          for ($k = $i; $k < $m; $k++) {
+            $s += $U[$k][$i] * $U[$k][$j];
           }
 
-          $f = $U[$i][$i];
-          $g = - $this->sign(sqrt($s), $f);
-          $h = $f * $g - $s;
-          $U[$i][$i] = $f - $g;
-
-          for($j = $l - 1; $j < $n; $j++){
-            for($s = 0.0, $k = $i; $k < $m; $k++) $s += $U[$k][$i] * $U[$k][$j];
-            $f = $s / $h;
-            for($k = $i; $k < $m; $k++) $U[$k][$j] += $f * $U[$k][$i];
+          $f = $s / $h;
+          for ($k = $i; $k < $m; $k++) {
+            $U[$k][$j] = $U[$k][$j] + $f * $U[$k][$i];
           }
-
-          for($k = $i; $k < $m; $k++) $U[$k][$i] *= $scale;
         }
       }
 
-      $W[$i] = $scale * $g;
-      $g = $s = $scale = 0.0;
+      $Q[$i] = $g;
+      $s = 0;
+      for ($j = $l; $j < $n; $j++) $s += pow($U[$i][$j], 2);
 
-      if($i+1 <= $m && $i+1 != $n) {
-        for ($k= $l-1; $k < $n; $k++) $scale += abs($U[$i][$k]);
+      if ($s < $this->TOL) $g = 0;
+      else {
+        $f = $U[$i][$i+1];
+        $g = $f < 0 ? sqrt($s) : -sqrt($s);
+        $h = $f*$g - $s;
+        $U[$i][$i+1] = $f - $g;
 
-        if($scale != 0.0) {
-          for ($k= $l - 1; $k < $n; $k++){
-            $U[$i][$k] /= $scale;
-            $s += $U[$i][$k] * $U[$i][$k];
-          }
-
-          $f = $U[$i][$l - 1];
-          $g = - $this->sign(sqrt($s), $f);
-          $h = $f * $g - $s;
-          $U[$i][$l - 1] = $f - $g;
-
-          for($k = $l - 1; $k < $n; $k++) $rv1[$k] = $U[$i][$k] / $h;
-          for($j = $l - 1; $j < $m; $j++){
-            for($s = 0.0, $k = $l - 1; $k < $n; $k++) $s += $U[$j][$k] * $U[$i][$k];
-            for($k = $l - 1; $k < $n; $k++) $U[$j][$k] += $s * $rv1[$k];
-          }
-
-          for($k= $l - 1; $k < $n; $k++) $U[$i][$k] *= $scale;
+        for ($j = $l; $j < $n; $j++) $e[$j] = $U[$i][$j] / $h;
+        for ($j = $l; $j < $m; $j++) {
+          $s = 0;
+          for ($k = $l; $k < $n; $k++) $s += $U[$j][$k] * $U[$i][$k];
+          for ($k = $l; $k < $n; $k++) $U[$j][$k] = $U[$j][$k] + $s * $e[$k];
         }
       }
 
-      $anorm = max($anorm, (abs($W[$i]) + abs($rv1[$i])));
+      $y = abs($Q[$i]) + abs($e[$i]);
+      if ($y > $x) $x = $y;
     }
 
-    // Accumulation of right-hand transformations.
-    for($i = $n - 1; $i >= 0; $i--){
-      if($i < $n - 1){
-        if($g != 0.0){
-          for($j = $l; $j < $n; $j++) // Double division to avoid possible underflow.
-          $V[$j][$i] = ($U[$i][$j] / $U[$i][$l]) / $g;
-          for($j = $l; $j < $n; $j++){
-            for($s = 0.0, $k = $l; $k < $n; $k++) $s += ($U[$i][$k] * $V[$k][$j]);
-            for($k = $l; $k < $n; $k++) $V[$k][$j] += $s * $V[$k][$i];
-          }
+    // Accumulation of right-hand transformations
+    for ($i = $n - 1; $i >= 0; $i--) {
+      if ($g != 0) {
+        $h = $g * $U[$i][$i+1];
+        for ($j = $l; $j < $n; $j++) $V[$j][$i] = $U[$i][$j] / $h;
+        for ($j = $l; $j < $n; $j++) {
+          $s = 0;
+          for ($k = $l; $k < $n; $k++) $s += $U[$i][$k] * $V[$k][$j];
+          for ($k = $l; $k < $n; $k++) $V[$k][$j] += $s * $V[$k][$i];
         }
-
-        for($j = $l; $j < $n; $j++) $V[$i][$j] = $V[$j][$i] = 0.0;
       }
 
-      $V[$i][$i] = 1.0;
-      $g = $rv1[$i];
+      for ($j < $l; $j < $n; $j++) {
+        $V[$i][$j] = 0;
+        $V[$j][$i] = 0;
+      }
+
+      $V[$i][$i] = 1;
+      $g = $e[$i];
       $l = $i;
     }
 
-    // Accumulation of left-hand transformations.
-    for($i = min($m, $n) - 1; $i >= 0; $i--){
+    //bug part
+    // Accumulation of left hand transformations
+    for ($i = $n - 1; $i >= 0; $i--) {
       $l = $i + 1;
-      $g = $W[$i];
-
-      for($j = $l; $j < $n; $j++) $U[$i][$j] = 0.0;
-      if($g != 0.0){
-        $g = 1.0 / $g;
-        for($j = $l; $j < $n; $j++){
-          for($s = 0.0, $k = $l; $k < $m; $k++) $s += $U[$k][$i] * $U[$k][$j];
-          $f = ($s / $U[$i][$i]) * $g;
-          for($k = $i; $k < $m; $k++) $U[$k][$j] += $f * $U[$k][$i];
+      $g = $Q[$i];
+      for ($j = $l; $j < $n; $j++) $U[$i][$j] = 0;
+      if ($g != 0) {
+        $h = $U[$i][$i] * $g;
+        for ($j = $l; $j < $n; $j++) {
+          $s = 0;
+          for ($k = $i; $k < $m; $k++) $s += $U[$k][$i] * $U[$k][$j];
+          $f = $s / $h;
+          for ($k = $i; $k < $m; $k++) $U[$k][$j] += $f * $U[$k][$i];
         }
 
-        for($j = $i; $j < $m; $j++) $U[$j][$i] *= $g;
+        for ($j = $i; $j < $m; $j++) $U[$j][$i] = $U[$j][$i] / $g;
       } else {
-        for($j = $i; $j < $m; $j++) $U[$j][$i] = 0.0;
+        for ($j = $i; $j < $m; $j++) $U[$j][$i] = 0;
       }
 
-      ++$U[$i][$i];
+      $U[$i][$i] += 1.0;
     }
 
+    //possible bug part
     // Diagonalization of the bidiagonal form
-    // Loop over singular values, and over allowed iterations.
-    for($k = $n - 1; $k >= 0; $k--) {
-      for($its = 0; $its < 30; $its++) {
-        $flag = true;
-        for($l = $k; $l >= 0; $l--){
-          $nm = $l - 1;
-          if( $l == 0 || abs($rv1[$l]) <= self::EPS*$anorm) {
-            $flag = false;
+    $this->EPS = $this->EPS * $x;
+    $total = 50;
+    for ($k = $n - 1; $k >= 0; $k--) {
+      for ($iteration = 0; $iteration < $total; $iteration++) {
+        // Test f splitting
+        for ($l = $k; $l >= 0; $l--) {
+          $test_convergence = false;
+          if (abs($e[$l]) <= $this->EPS) {
+            $test_convergence = true;
             break;
           }
 
-          if(abs($W[$nm]) <= self::EPS*$anorm) break;
+          if (abs($Q[$l-1]) <= $this->EPS) break;
         }
 
-        if ($flag) {
-          $c = 0.0;  // Cancellation of rv1[l], if l > 0.
-          $s = 1.0;
+        if (!$test_convergence) {
+          // Cancellation of e[l] if l > 0
+          $c = 0;
+          $s = 1;
+          $l1 = $l-1;
+          for ($i = $l; $i < $k + 1; $i++) {
+            $f = $s * $e[$i];
+            $e[$i] = $c * $e[$i];
+            if (abs($f) <= $this->EPS) break;
 
-          for($i = $l; $i < $k + 1; $i++){
-            $f = $s * $rv1[$i];
-            $rv1[$i] = $c * $rv1[$i];
-            if(abs($f) <= self::EPS*$anorm) break;
-
-            $g = $W[$i];
-            $h = $this->pythag($f,$g);
-            $W[$i] = $h;
-            $h = 1.0 / $h;
-            $c = $g * $h;
-            $s = -$f * $h;
-
-            for($j = 0; $j < $m; $j++){
-              $y = $U[$j][$nm];
+            $g = $Q[$i];
+            $h = $this->pythag($f, $g);
+            $Q[$i] = $h;
+            $c = $g / $h;
+            $s = -$f / $h;
+            for ($j = 0; $j < $m; $j++) {
+              $y = $U[$j][$l1];
               $z = $U[$j][$i];
-              $U[$j][$nm] = $y*$c + $z*$s;
-              $U[$j][$i] = $z*$c - $y*$s;
+              $U[$j][$l1] = $y*$c + $z*$s;
+              $U[$j][$i] = -$y*$s + $z*$c;
             }
           }
         }
-
-        $z = $W[$k];
-        if($l == $k) {
-          if($z < 0.0) {
-            $W[$k] = -$z; // Singular value is made nonnegative.
-            for($j = 0; $j < $n; $j++) $V[$j][$k] = -$V[$j][$k];
-          }
+        
+        // Test f convergence
+        $z = $Q[$k];
+        if ($l == $k) {
+          if ($z < 0) { // Convergence
+            $Q[$k] = -$z; #$Q[$k] is made non-negative
+            for ($j = 0; $j < $n; $j++) {
+              $V[$j][$k] = -$V[$j][$k];
+            }
+          } 
           break;
         }
 
-        if($its == 29) print("no convergence in 30 svd iterations");
+        $x = $Q[$l];
+        $y = $Q[$k-1];
+        $g = $e[$k-1];
+        $h = $e[$k];
+        $f = (($y-$z) * ($y+$z) + ($g-$h) * ($g+$h)) / (2*$h*$y);
+        $g = $this->pythag($f, 1);
 
-        $x = $W[$l]; // Shift from bottom 2-by-2 minor.
-        $nm = $k - 1;
-        $y = $W[$nm];
-        $g = $rv1[$nm];
-        $h = $rv1[$k];
-        $f = (($y-$z) * ($y+$z) + ($g-$h) * ($g+$h)) / (2.0 * $h*$y);
-        $g = $this->pythag($f,1.0);
-        $f = (($x-$z) * ($x+$z) + $h * (($y / ($f + $this->sign($g,$f))) - $h)) / $x;
-        $c = $s = 1.0;
-
-        for($j = $l; $j <= $nm; $j++) {
-          $i = $j + 1;
-          $g = $rv1[$i];
-          $y = $W[$i];
+        if ($f < 0) $f = (($x-$z) * ($x+$z) + $h * ($y / ($f-$g) - $h)) / $x;
+        else $f = (($x-$z) * ($x+$z) + $h * ($y / ($f+$g) - $h)) / $x;
+            
+        # next QR transformation
+        $c = 1;
+        $s = 1;
+        for ($i = $l + 1; $i < $k + 1; $i++) {
+          $g = $e[$i];
+          $y = $Q[$i];
           $h = $s * $g;
           $g = $c * $g;
-          $z = $this->pythag($f,$h);
-          $rv1[$j] = $z;
+          $z = $this->pythag($f, $h);
+          $e[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
           $f = $x*$c + $g*$s;
-          $g = $g*$c - $x*$s;
+          $g = -$x*$s + $g*$c;
           $h = $y*$s;
-          $y *= $c;
-
-          for($jj = 0; $jj < $n; $jj++){
-            $x = $V[$jj][$j];
-            $z = $V[$jj][$i];
-            $V[$jj][$j] = $x*$c + $z*$s;
-            $V[$jj][$i] = $z*$c - $x*$s;
+          $y = $y*$c;
+          for ($j = 0; $j < $n; $j++) {
+            $x = $V[$j][$i-1];
+            $z = $V[$j][$i];
+            $V[$j][$i-1] = $x*$c + $z*$s;
+            $V[$j][$i] = -$x*$s + $z*$c;
           }
 
-          $z = $this->pythag($f,$h);
-          $W[$j] = $z;  // Rotation can be arbitrary if z = 0.
-          if($z) {
-            $z = 1.0 / $z;
-            $c = $f * $z;
-            $s = $h * $z;
-          }
-
+          $z = $this->pythag($f, $h);
+          $Q[$i-1] = $z;
+          $c = $f / $z;
+          $s = $h / $z;
           $f = $c*$g + $s*$y;
-          $x = $c*$y - $s*$g;
-          for($jj = 0; $jj < $m; $jj++){
-            $y = $U[$jj][$j];
-            $z = $U[$jj][$i];
-            $U[$jj][$j] = $y*$c + $z*$s;
-            $U[$jj][$i] = $z*$c - $y*$s;
+          $x = -$s*$g + $c*$y;
+
+          for ($j = 0; $j < $m; $j++){
+            $y = $U[$j][$i-1];
+            $z = $U[$j][$i];
+            $U[$j][$i-1] = $y*$c + $z*$s;
+            $U[$j][$i] = -$y*$s + $z*$c;
           }
         }
 
-        $rv1[$l] = 0.0;
-        $rv1[$k] = $f;
-        $W[$k] = $x;
+        $e[$l] = 0;
+        $e[$k] = $f;
+        $Q[$k] = $x;
       }
-    }
-
-    // Reorder Phase
-    // Sort. The method is Shell's sort.
-    // (The work is negligible as compared to that already done in decompose phase.)
-    $inc = 1;
-    do {
-      $inc *= 3;
-      $inc++;
-    } while($inc <= $n);
-
-    do {
-      $inc /= 3;
-      for($i = $inc; $i < $n; $i++){
-        $sw = $W[$i];
-
-        for($k = 0; $k < $m; $k++) $su[$k] = $U[$k][$i];
-        for($k = 0; $k < $n; $k++) $sv[$k] = $V[$k][$i];
-
-        $j = $i;
-
-        while($W[$j - $inc] < $sw){
-          $W[$j] = $W[$j - $inc];
-          for($k = 0; $k < $m; $k++) $U[$k][$j] = $U[$k][$j - $inc];
-          for($k = 0; $k < $n; $k++) $V[$k][$j] = $V[$k][$j - $inc];
-          $j -= $inc;
-          if($j < $inc) break;
-        }
-
-        $W[$j] = $sw;
-        for($k = 0; $k < $m; $k++) $U[$k][$j] = $su[$k];
-        for($k = 0; $k < $n; $k++) $V[$k][$j] = $sv[$k];
-      }
-    }  while($inc > 1);
-
-    for($k = 0; $k < $n; $k++){
-      $s = 0;
-      for($i = 0; $i < $m; $i++) if ($U[$i][$k] < 0.0) $s++;
-      for($j = 0; $j < $n; $j++) if ($V[$j][$k] < 0.0) $s++;
-      if($s > ($m + $n)/2) {
-          for ($i = 0; $i < $m; $i++) $U[$i][$k] = - $U[$i][$k];
-          for ($j = 0; $j < $n; $j++) $V[$j][$k] = - $V[$j][$k];
-      }
-    }
+    }      
     
-    // calculate the rank
-    $rank = 0;
-    for($i = 0; $i < count($W); $i++){
-      if (round($W[$i], 4) > 0) $rank += 1;
-    }
-
-    // Low-Rank Approximation
-    $q = 0.9;
-    $k = 0;
-    $frobA = 0;
-    for($i = 0; $i < $rank; $i++) $frobA += $W[$i];
-    $frobAk = 0;
-    do {
-      for($i = 0; $i <= $k; $i++) $frobAk += $W[$i];
-      $clt = $frobAk / $frobA;
-      $k++;
-    } while($clt < $q);
-    
-    // prepare S matrix as n*n daigonal matrix of singular values
-    for($i = 0; $i < $n; $i++){
-      for ($j = 0; $j < $n; $j++){
-        $S[$i][$j] = 0;
-        $S[$i][$i] = $W[$i];
-      }
-    }
-    
-    $matrices['U'] = $U;
-    $matrices['S'] = $S;
-    $matrices['W'] = $W;
-    $matrices['V'] = $this->transpose($V);
-    $matrices['Rank'] = $rank;
-    $matrices['K'] = $k;
-    
-    return $matrices;
+    return [$U, $Q, $V];
   }
 }
