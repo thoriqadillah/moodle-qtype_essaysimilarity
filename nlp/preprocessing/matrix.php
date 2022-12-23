@@ -343,6 +343,6 @@ class matrix {
       }
     }      
     
-    return [$U, $Q, $V];
+    return [$U, $V, $Q];
   }
 }
