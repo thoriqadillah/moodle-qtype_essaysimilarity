@@ -46,6 +46,7 @@ class tokenizer {
   protected function normalize($str) {
     $str = preg_replace('/[^a-z -]/im', ' ', $str);
     $str = preg_replace('/( +)/im', ' ', $str);
+    $str = str_replace('- ', '', $str);
 
     return trim($str);
   }
