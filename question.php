@@ -30,6 +30,8 @@ require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/preprocessing/tokenizer.php');
 require_once('nlp/preprocessing/tfidf_transformer.php');
+require_once('nlp/preprocessing/matrix.php');
+require_once('nlp/lsa.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -110,8 +112,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   private function preprocess($answerkeytext, $responsetext, $lang) {
     $tokenizer = new tokenizer($lang);
     
-    list($counted_answerkey, $raw_answerkey) = $tokenizer->tokenize($answerkeytext);
-    list($counted_response, $raw_response) = $tokenizer->tokenize($responsetext);
+    [$counted_answerkey, $raw_answerkey] = $tokenizer->tokenize($answerkeytext);
+    [$counted_response, $raw_response] = $tokenizer->tokenize($responsetext);
 
     $merged = array_merge($raw_answerkey, $raw_response);
     $tok_answerkey = array_replace($merged, $counted_answerkey);
@@ -141,7 +143,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $answerkeytext = core_text::strtolower($answerkeytext);
 
-    list($tok_answerkey, $tok_response) = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
+    [$tok_answerkey, $tok_response] = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
 
     $cossim = new cosine_similarity($tok_answerkey, $tok_response);
     $similarity = $cossim->get_similarity();
