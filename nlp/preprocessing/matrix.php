@@ -16,6 +16,15 @@ class matrix {
     $this->TOL = 1e-64 / $this->EPS;
   }
 
+  public function truncate(&$matrix, $rows, $columns) {
+    for ($i = 0; $i < count($matrix); $i++) {
+      if ($i > $rows) {
+        array_splice($matrix, $rows);
+        break;
+      } else array_splice($matrix, $columns);
+    }
+  }
+
   /**
 	 * Matrix multiplication
 	 * 
@@ -131,8 +140,8 @@ class matrix {
     // Copy matrix to $U
     $U = $this->construct($this->matrix, $m, $n);
     
-    // Initialize $Q and $V
-    $Q = array_fill(0, $n, 0);
+    // Initialize $S and $V
+    $S = array_fill(0, $n, 0);
     $V = array_fill(0, $n, array_fill(0, $n, 0));
 
     $e = array_fill(0, $n, 0);
@@ -168,7 +177,7 @@ class matrix {
         }
       }
 
-      $Q[$i] = $g;
+      $S[$i] = $g;
       $s = 0;
       for ($j = $l; $j < $n; $j++) $s += pow($U[$i][$j], 2);
 
@@ -187,7 +196,7 @@ class matrix {
         }
       }
 
-      $y = abs($Q[$i]) + abs($e[$i]);
+      $y = abs($S[$i]) + abs($e[$i]);
       if ($y > $x) $x = $y;
     }
 
@@ -217,7 +226,7 @@ class matrix {
     // Accumulation of left hand transformations
     for ($i = $n - 1; $i >= 0; $i--) {
       $l = $i + 1;
-      $g = $Q[$i];
+      $g = $S[$i];
       for ($j = $l; $j < $n; $j++) $U[$i][$j] = 0;
       if ($g != 0) {
         $h = $U[$i][$i] * $g;
@@ -250,7 +259,7 @@ class matrix {
             break;
           }
 
-          if (abs($Q[$l-1]) <= $this->EPS) break;
+          if (abs($S[$l-1]) <= $this->EPS) break;
         }
 
         if (!$test_convergence) {
@@ -263,9 +272,9 @@ class matrix {
             $e[$i] = $c * $e[$i];
             if (abs($f) <= $this->EPS) break;
 
-            $g = $Q[$i];
+            $g = $S[$i];
             $h = $this->pythag($f, $g);
-            $Q[$i] = $h;
+            $S[$i] = $h;
             $c = $g / $h;
             $s = -$f / $h;
             for ($j = 0; $j < $m; $j++) {
@@ -278,10 +287,10 @@ class matrix {
         }
         
         // Test f convergence
-        $z = $Q[$k];
+        $z = $S[$k];
         if ($l == $k) {
           if ($z < 0) { // Convergence
-            $Q[$k] = -$z; #$Q[$k] is made non-negative
+            $S[$k] = -$z; #$S[$k] is made non-negative
             for ($j = 0; $j < $n; $j++) {
               $V[$j][$k] = -$V[$j][$k];
             }
@@ -289,8 +298,8 @@ class matrix {
           break;
         }
 
-        $x = $Q[$l];
-        $y = $Q[$k-1];
+        $x = $S[$l];
+        $y = $S[$k-1];
         $g = $e[$k-1];
         $h = $e[$k];
         $f = (($y-$z) * ($y+$z) + ($g-$h) * ($g+$h)) / (2*$h*$y);
@@ -304,7 +313,7 @@ class matrix {
         $s = 1;
         for ($i = $l + 1; $i < $k + 1; $i++) {
           $g = $e[$i];
-          $y = $Q[$i];
+          $y = $S[$i];
           $h = $s * $g;
           $g = $c * $g;
           $z = $this->pythag($f, $h);
@@ -323,7 +332,7 @@ class matrix {
           }
 
           $z = $this->pythag($f, $h);
-          $Q[$i-1] = $z;
+          $S[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
           $f = $c*$g + $s*$y;
@@ -339,10 +348,19 @@ class matrix {
 
         $e[$l] = 0;
         $e[$k] = $f;
-        $Q[$k] = $x;
+        $S[$k] = $x;
       }
-    }      
+    }     
     
-    return [$U, $V, $Q];
+    // prepare Sv matrix as n*n daigonal matrix of singular values
+    $Sv = [];
+    for($i = 0; $i < $n; $i++){
+      for ($j = 0; $j < $n; $j++){
+        $Sv[$i][$j] = 0;
+        $Sv[$i][$i] = $S[$i];
+      }
+    }
+    
+    return [$U, $S, $Sv, $V];
   }
 }
