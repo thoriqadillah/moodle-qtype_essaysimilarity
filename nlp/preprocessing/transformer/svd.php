@@ -16,19 +16,35 @@ class svd {
    */
   private $matrix = [];
 
+  /**
+   * @param matrix $matrix Matrix class to perform calculation
+   */
   public function __construct($matrix) {
     $this->matrix = $matrix;
+    $this->decompose();
+  }
 
+  /**
+   * Perform truncated SVD
+   * @param matrix $matrix Matrix class to perform calculation
+   * @param int $dimension Desired dimension
+   */
+  public static function transform($matrix, $dimension) {
+    $svd = new svd($matrix);
+    return $svd->truncate($dimension);
+  }
+
+  private function decompose() {
     // Convert array key from string to numeric
-    foreach ($matrix->get() as &$mtx) {
+    foreach ($this->matrix->get() as &$mtx) {
       $mtx = array_values($mtx);
     }
 
-    $m = count($matrix->get());
-    $n = count($matrix->get()[0]);
+    $m = count($this->matrix->get());
+    $n = count($this->matrix->get()[0]);
 
     // Copy matrix to $U
-    $U = $matrix->construct($matrix->get(), $m, $n);
+    $U = $this->matrix->construct($this->matrix->get(), $m, $n);
     
     // Initialize $S and $V
     $S = array_fill(0, $n, 0);
@@ -47,7 +63,7 @@ class svd {
         $s += pow($U[$j][$i], 2);
       }
 
-      if ($s < $matrix::$TOL) $g = 0;
+      if ($s < $this->matrix::$TOL) $g = 0;
       else {
         $f = $U[$i][$i];
         $g = $f < 0 ? sqrt($s) : -sqrt($s);
@@ -71,7 +87,7 @@ class svd {
       $s = 0;
       for ($j = $l; $j < $n; $j++) $s += pow($U[$i][$j], 2);
 
-      if ($s < $matrix::$TOL) $g = 0;
+      if ($s < $this->matrix::$TOL) $g = 0;
       else {
         $f = $U[$i][$i+1];
         $g = $f < 0 ? sqrt($s) : -sqrt($s);
@@ -137,19 +153,19 @@ class svd {
 
     //possible bug part
     // Diagonalization of the bidiagonal form
-    $matrix::$EPS = $matrix::$EPS * $x;
+    $this->matrix::$EPS = $this->matrix::$EPS * $x;
     $total = 50;
     for ($k = $n - 1; $k >= 0; $k--) {
       for ($iteration = 0; $iteration < $total; $iteration++) {
         // Test f splitting
         for ($l = $k; $l >= 0; $l--) {
           $test_convergence = false;
-          if (abs($e[$l]) <= $matrix::$EPS) {
+          if (abs($e[$l]) <= $this->matrix::$EPS) {
             $test_convergence = true;
             break;
           }
 
-          if (abs($S[$l-1]) <= $matrix::$EPS) break;
+          if (abs($S[$l-1]) <= $this->matrix::$EPS) break;
         }
 
         if (!$test_convergence) {
@@ -160,10 +176,10 @@ class svd {
           for ($i = $l; $i < $k + 1; $i++) {
             $f = $s * $e[$i];
             $e[$i] = $c * $e[$i];
-            if (abs($f) <= $matrix::$EPS) break;
+            if (abs($f) <= $this->matrix::$EPS) break;
 
             $g = $S[$i];
-            $h = $matrix->pythag($f, $g);
+            $h = $this->matrix->pythag($f, $g);
             $S[$i] = $h;
             $c = $g / $h;
             $s = -$f / $h;
@@ -193,7 +209,7 @@ class svd {
         $g = $e[$k-1];
         $h = $e[$k];
         $f = (($y-$z) * ($y+$z) + ($g-$h) * ($g+$h)) / (2*$h*$y);
-        $g = $matrix->pythag($f, 1);
+        $g = $this->matrix->pythag($f, 1);
 
         if ($f < 0) $f = (($x-$z) * ($x+$z) + $h * ($y / ($f-$g) - $h)) / $x;
         else $f = (($x-$z) * ($x+$z) + $h * ($y / ($f+$g) - $h)) / $x;
@@ -206,7 +222,7 @@ class svd {
           $y = $S[$i];
           $h = $s * $g;
           $g = $c * $g;
-          $z = $matrix->pythag($f, $h);
+          $z = $this->matrix->pythag($f, $h);
           $e[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
@@ -221,7 +237,7 @@ class svd {
             $V[$j][$i] = -$x*$s + $z*$c;
           }
 
-          $z = $matrix->pythag($f, $h);
+          $z = $this->matrix->pythag($f, $h);
           $S[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
@@ -275,8 +291,10 @@ class svd {
     self::$S = $S;
     self::$Sv = $Sv;
     self::$V = $V;
-    self::$Vt = $matrix->transpose($V);
+    self::$Vt = $this->matrix->transpose($V);
     self::$K = $K;
+
+    return $this;
   }
 
   /**
