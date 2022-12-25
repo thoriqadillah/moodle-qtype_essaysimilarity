@@ -29,9 +29,8 @@ defined("MOODLE_INTERNAL") || die();
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/preprocessing/tokenizer.php');
-require_once('nlp/preprocessing/tfidf_transformer.php');
-require_once('nlp/preprocessing/matrix.php');
-require_once('nlp/lsa.php');
+require_once('nlp/preprocessing/transformer/tfidf_transformer.php');
+require_once('nlp/preprocessing/transformer/svd.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -145,8 +144,22 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     [$tok_answerkey, $tok_response] = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
 
+    $mtx = [
+      [1,1,1,0,0],
+      [3,3,3,0,0],
+      [4,4,4,0,0],
+      [5,5,5,0,0],
+      [0,2,1,4,4],
+      [0,1,1,5,5],
+      [0,1,1,2,2],
+    ];
+    $mtx = svd::transform(new matrix($mtx), 2);
+    print_object($mtx);
+
     $cossim = new cosine_similarity($tok_answerkey, $tok_response);
     $similarity = $cossim->get_similarity();
+    print_object($similarity);
+    die();
 
     $state = null;
     
