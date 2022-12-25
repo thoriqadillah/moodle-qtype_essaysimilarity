@@ -26,14 +26,18 @@ class svd {
 
   /**
    * Perform truncated SVD
+   * 
    * @param matrix $matrix Matrix class to perform calculation
-   * @param int $dimension Desired dimension
+   * @param int|null $dimension desired dimension
+   * @return array transformed matrix
    */
   public static function transform($matrix, $dimension) {
-    $svd = new svd($matrix);
-    return $svd->truncate($dimension);
+    return (new svd($matrix))->truncate($dimension);
   }
 
+  /**
+   * Perform SVD
+   */
   private function decompose() {
     // Convert array key from string to numeric
     foreach ($this->matrix->get() as &$mtx) {
@@ -299,9 +303,15 @@ class svd {
 
   /**
    * Truncate the decomposed matrix to certain dimension
-   * @param int $dimension desired dimension
+   * 
+   * @param int|null $dimension desired dimension
+   * @return array transformed matrix
    */
-  public function truncate($dimension) {
+  public function truncate($dimension = null) {
+    if ($dimension == null) {
+      return $this->get();
+    }
+
     // reducing S to desired dimension
     for ($i = $dimension; $i < count(self::$S); $i++) { 
       self::$S[$i] = 0;
@@ -319,6 +329,7 @@ class svd {
 
   /**
    * Get the decomposed matrix
+   * @return array transformed matrix
    */
   public function get() {
     return $this->matrix->multiply(self::$U, $this->matrix->multiply(self::$Sv, self::$Vt));
