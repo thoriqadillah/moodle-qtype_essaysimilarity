@@ -1,144 +1,34 @@
 <?php
 
-use mod_bigbluebuttonbn\instance;
+require_once('matrix.php');
 
-class matrix {
+class svd {
 
-  private $EPS = 2.2204460492503E-16;
-  private $TOL;
+  public static $U  = [];
+  public static $S  = [];
+  public static $Sv = [];
+  public static $V  = [];
+  public static $Vt = [];
+  public static $K;
+
+  /**
+   * @var matrix
+   */
   private $matrix = [];
 
-  /**
-   * @param array $matrix a multi-dimensional array
-   */
   public function __construct($matrix) {
     $this->matrix = $matrix;
-    $this->TOL = 1e-64 / $this->EPS;
-  }
 
-  public function truncate(&$matrix, $rows, $columns) {
-    for ($i = 0; $i < count($matrix); $i++) {
-      if ($i > $rows) {
-        array_splice($matrix, $rows);
-        break;
-      } else array_splice($matrix, $columns);
-    }
-  }
-
-  /**
-	 * Matrix multiplication
-	 * 
-	 * @param array $matrix_a
-	 * @param array $matrix_a
-	 * @return array 
-	 */
-	public function multiply($matrix_a, $matrix_b) {
-		$product = [];
-
-		$rows_a = count($matrix_a);
-		$cols_a = count($matrix_a[0]);
-
-		$rows_b = count($matrix_b);
-		$cols_b = count($matrix_b[0]);
-		
-		// multiplication cannot be done
-		if ($cols_a !== $rows_b) return $product;
-
-		for($i = 0; $i < $rows_a; $i++){
-			for($j = 0; $j < $cols_b; $j++){
-				for($p = 0; $p < $cols_a; $p++){
-					$product[$i][$j] += $matrix_a[$i][$p] * $matrix_b[$p][$j];
-				}
-			}
-		}
-		
-		return $product;
-	}
-
-	/**
-	 * Matrix transposition
-	 * 
-	 * @param array $matrix
-	 * @return array
-	 */
-	public function transpose($matrix) {
-    $result = [];
-
-		$m = count($matrix);
-		$n = count($matrix[0]);
-
-    for($i = 0; $i < $n; $i++){
-      for($j = 0; $j < $m; $j++){
-        $result[$i][$j] = $matrix[$j][$i];
-      }
-    }
-
-    return $result;
-	}
-
-  /**
-   * Matrix rounding
-   * 
-   * @param array $matrix
-   * @return array 
-   */
-  public function round($matrix) {
-    $result = [];
-
-    $m = count($matrix);
-    $n = count($matrix[0]);
-    
-    for($i = 0; $i < $m; $i++){
-      for($j = 0; $j < $n; $j++){
-        $result[$i][$j] = round($matrix[$i][$j], 2);
-      }
-    }
-
-    return $result;
-  }
-
-  public function construct($matrix, $rows, $columns) {
-    $neo_matrix = [];
-    for($i = 0; $i < $rows; $i++){
-      for($j = 0; $j < $columns; $j++){
-        $neo_matrix[$i][$j] = $matrix[$i][$j];
-      }
-    }
-
-    return $neo_matrix;
-  }
-
-  private function pythag($a, $b) {
-    $a = abs($a);
-    $b = abs($b);
-
-    if ($a > $b) {
-      return $a * sqrt(1.0 + pow($b/$a, 2));
-    }
-
-    if ($b > 0.0) {
-      return $b * sqrt(1.0 + pow($a/$b, 2));
-    }
-
-    return 0;
-  }
-
-  /**
-   * Singular value decomposition
-   * @param array $matrix
-   * @return array
-   */
-  public function svd() {
     // Convert array key from string to numeric
-    foreach ($this->matrix as &$matrix) {
-      $matrix = array_values($matrix);
+    foreach ($matrix->get() as &$mtx) {
+      $mtx = array_values($mtx);
     }
 
-    $m = count($this->matrix);
-    $n = count($this->matrix[0]);
+    $m = count($matrix->get());
+    $n = count($matrix->get()[0]);
 
     // Copy matrix to $U
-    $U = $this->construct($this->matrix, $m, $n);
+    $U = $matrix->construct($matrix->get(), $m, $n);
     
     // Initialize $S and $V
     $S = array_fill(0, $n, 0);
@@ -157,7 +47,7 @@ class matrix {
         $s += pow($U[$j][$i], 2);
       }
 
-      if ($s < $this->TOL) $g = 0;
+      if ($s < $matrix::$TOL) $g = 0;
       else {
         $f = $U[$i][$i];
         $g = $f < 0 ? sqrt($s) : -sqrt($s);
@@ -181,7 +71,7 @@ class matrix {
       $s = 0;
       for ($j = $l; $j < $n; $j++) $s += pow($U[$i][$j], 2);
 
-      if ($s < $this->TOL) $g = 0;
+      if ($s < $matrix::$TOL) $g = 0;
       else {
         $f = $U[$i][$i+1];
         $g = $f < 0 ? sqrt($s) : -sqrt($s);
@@ -247,19 +137,19 @@ class matrix {
 
     //possible bug part
     // Diagonalization of the bidiagonal form
-    $this->EPS = $this->EPS * $x;
+    $matrix::$EPS = $matrix::$EPS * $x;
     $total = 50;
     for ($k = $n - 1; $k >= 0; $k--) {
       for ($iteration = 0; $iteration < $total; $iteration++) {
         // Test f splitting
         for ($l = $k; $l >= 0; $l--) {
           $test_convergence = false;
-          if (abs($e[$l]) <= $this->EPS) {
+          if (abs($e[$l]) <= $matrix::$EPS) {
             $test_convergence = true;
             break;
           }
 
-          if (abs($S[$l-1]) <= $this->EPS) break;
+          if (abs($S[$l-1]) <= $matrix::$EPS) break;
         }
 
         if (!$test_convergence) {
@@ -270,10 +160,10 @@ class matrix {
           for ($i = $l; $i < $k + 1; $i++) {
             $f = $s * $e[$i];
             $e[$i] = $c * $e[$i];
-            if (abs($f) <= $this->EPS) break;
+            if (abs($f) <= $matrix::$EPS) break;
 
             $g = $S[$i];
-            $h = $this->pythag($f, $g);
+            $h = $matrix->pythag($f, $g);
             $S[$i] = $h;
             $c = $g / $h;
             $s = -$f / $h;
@@ -303,12 +193,12 @@ class matrix {
         $g = $e[$k-1];
         $h = $e[$k];
         $f = (($y-$z) * ($y+$z) + ($g-$h) * ($g+$h)) / (2*$h*$y);
-        $g = $this->pythag($f, 1);
+        $g = $matrix->pythag($f, 1);
 
         if ($f < 0) $f = (($x-$z) * ($x+$z) + $h * ($y / ($f-$g) - $h)) / $x;
         else $f = (($x-$z) * ($x+$z) + $h * ($y / ($f+$g) - $h)) / $x;
             
-        # next QR transformation
+        // S transformation
         $c = 1;
         $s = 1;
         for ($i = $l + 1; $i < $k + 1; $i++) {
@@ -316,7 +206,7 @@ class matrix {
           $y = $S[$i];
           $h = $s * $g;
           $g = $c * $g;
-          $z = $this->pythag($f, $h);
+          $z = $matrix->pythag($f, $h);
           $e[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
@@ -331,7 +221,7 @@ class matrix {
             $V[$j][$i] = -$x*$s + $z*$c;
           }
 
-          $z = $this->pythag($f, $h);
+          $z = $matrix->pythag($f, $h);
           $S[$i-1] = $z;
           $c = $f / $z;
           $s = $h / $z;
@@ -351,6 +241,26 @@ class matrix {
         $S[$k] = $x;
       }
     }     
+
+    rsort($S);
+    
+    // calculate the rank
+    $rank = 0;
+    for($i = 0; $i < count($S); $i++){
+      if (round($S[$i], 4) > 0) $rank += 1;
+    }
+
+    // Low-Rank Approximation
+    $q = 0.9;
+    $K = 0;
+    $frobA = 0;
+    for($i = 0; $i < $rank; $i++) $frobA += $S[$i];
+    $frobAk = 0;
+    do {
+      for($i = 0; $i <= $K; $i++) $frobAk += $S[$i];
+      $clt = $frobAk / $frobA;
+      $K++;
+    } while($clt < $q);
     
     // prepare Sv matrix as n*n daigonal matrix of singular values
     $Sv = [];
@@ -360,7 +270,40 @@ class matrix {
         $Sv[$i][$i] = $S[$i];
       }
     }
-    
-    return [$U, $S, $Sv, $V];
+
+    self::$U = $U;
+    self::$S = $S;
+    self::$Sv = $Sv;
+    self::$V = $V;
+    self::$Vt = $matrix->transpose($V);
+    self::$K = $K;
   }
+
+  /**
+   * Truncate the decomposed matrix to certain dimension
+   * @param int $dimension desired dimension
+   */
+  public function truncate($dimension) {
+    // reducing S to desired dimension
+    for ($i = $dimension; $i < count(self::$S); $i++) { 
+      self::$S[$i] = 0;
+    }
+    
+    for($i = 0; $i < count(self::$S); $i++){
+      for ($j = 0; $j < count(self::$S); $j++){
+        self::$Sv[$i][$j] = 0;
+        self::$Sv[$i][$i] = self::$S[$i];
+      }
+    }
+ 
+    return $this->get();
+  }
+
+  /**
+   * Get the decomposed matrix
+   */
+  public function get() {
+    return $this->matrix->multiply(self::$U, $this->matrix->multiply(self::$Sv, self::$Vt));
+  }
+
 }
