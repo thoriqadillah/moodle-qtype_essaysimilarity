@@ -2,8 +2,6 @@
 
 class matrix {
 
-  public static $EPS = 2.2204460492503E-16;
-  public static $TOL;
   private $matrix = [];
 
   /**
@@ -11,7 +9,6 @@ class matrix {
    */
   public function __construct($matrix) {
     $this->matrix = $matrix;
-    self::$TOL = 1e-64 / self::$EPS;
   }
 
   public function truncate(&$matrix, $rows, $columns) {
