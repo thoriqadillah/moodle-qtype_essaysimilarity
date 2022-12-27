@@ -148,8 +148,6 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     $cossim = new cosine_similarity($tok_answerkey, $tok_response);
     $similarity = $cossim->get_similarity();
-    print_object($similarity);
-    die();
 
     $state = null;
     
