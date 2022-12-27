@@ -79,18 +79,13 @@ class svd {
    */
   public function decompose() {
     // Convert array key from string to numeric
-    foreach ($this->matrix->get() as &$mtx) {
-      $mtx = array_values($mtx);
-    }
-
-    
     $m = count($this->matrix->get());
     $n = count($this->matrix->get()[0]);
     $nu = min($m, $n);
-    
+
     //Copy matrix to A
     $A =  $this->matrix->construct($this->matrix->get(), $m, $n);
-
+    
     $s = array_fill(0, min($m+1, $n), 0);
     $U = array_fill(0, $m, array_fill(0, $nu, 0));
     $V = array_fill(0, $n, array_fill(0, $n, 0));

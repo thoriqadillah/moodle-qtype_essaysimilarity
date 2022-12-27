@@ -143,10 +143,13 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $answerkeytext = core_text::strtolower($answerkeytext);
 
-    [$tok_answerkey, $tok_response] = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
+    $documents = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
+    [$tok_answerkey, $tok_response] = (new lsa())->transform(new matrix($documents));
 
     $cossim = new cosine_similarity($tok_answerkey, $tok_response);
     $similarity = $cossim->get_similarity();
+    print_object($similarity);
+    die();
 
     $state = null;
     

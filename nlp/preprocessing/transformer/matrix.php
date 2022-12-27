@@ -8,7 +8,9 @@ class matrix {
    * @param array $matrix a multi-dimensional array
    */
   public function __construct($matrix) {
-    $this->matrix = $matrix;
+    foreach ($matrix as $mtx) {
+      $this->matrix[] = array_values($mtx);
+    }
   }
 
   public function truncate(&$matrix, $rows, $columns) {

@@ -38,6 +38,7 @@ class cosine_similarity {
     $v1_norm = $this->magintude($this->v1);
     $v2_norm = $this->magintude($this->v2);
 
-    return $prod / ($v1_norm * $v2_norm);
+    $magnitude = ($v1_norm * $v2_norm);
+    return ($magnitude == 0) ? 0 : $prod / $magnitude;
   }
 }
