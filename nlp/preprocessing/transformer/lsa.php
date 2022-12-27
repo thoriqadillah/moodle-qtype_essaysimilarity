@@ -11,17 +11,16 @@ class lsa {
    * @param int $features total feature that want to be extracted
    * 
    */
-  public static function transform($matrix, $features = null) {
-    $m = $matrix->get();
-    $n = $matrix->get()[0];
+  public function transform($matrix, $features = null) {
+    $m = count($matrix->get());
+    $n = count($matrix->get()[0]);
 
     $svd = new svd($matrix);
-    $min = min($features ?? $svd::$K, count($m), count($n));
-    
-    //FIXME
-    $matrix->truncate($svd::$Vt, count($n), $min);
-    $V = $matrix->transpose($svd::$Vt);
+    $min = min($features ?? $svd::$K, $m, $n);
 
-    return $matrix->multiply($m, $V);
+    $matrix->truncate($svd::$U, $m, $min);
+    $Ut = $matrix->transpose($svd::$U);
+
+    return $matrix->multiply($matrix->get(), $Ut);
   }
 }
