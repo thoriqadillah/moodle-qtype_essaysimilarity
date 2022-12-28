@@ -121,7 +121,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $docs = [];
     $merged = [];
     foreach ($documents as $doc) {
-      $tokens = $tokenizer->tokenize($doc);
+      $tokens = $tokenizer->tokenize(strtolower($doc));
       $merged = array_merge($merged, $tokens['raw']);
       $docs[] = $tokens['counted'];
     }
