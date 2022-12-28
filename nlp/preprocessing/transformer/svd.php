@@ -29,7 +29,7 @@ class svd {
   public static $V  = [];
 
   /**
-   * Transposed singular vector
+   * Transposed right singular vector
    * @var array
    */
   public static $Vt = [];

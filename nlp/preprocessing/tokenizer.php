@@ -37,7 +37,10 @@ class tokenizer {
       return 0;
     }, $raw);
     
-    return [array_count_values($token), $raw];
+    return [
+      'counted' => array_count_values($token),
+      'raw' => $raw
+    ];
   }
 
   /**

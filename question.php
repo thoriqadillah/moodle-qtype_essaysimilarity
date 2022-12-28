@@ -109,21 +109,31 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     return $this->get_and_save_textstats($responsetext, true);
   }
 
-  private function preprocess($answerkeytext, $responsetext, $lang) {
+  /**
+   * Pre-process the documents
+   * 
+   * @param array $documents Documents that want to be pre-processed
+   * @param string $lang Language of the documents
+   */
+  private function preprocess($documents, $lang) {
     $tokenizer = new tokenizer($lang);
     
-    [$counted_answerkey, $raw_answerkey] = $tokenizer->tokenize($answerkeytext);
-    [$counted_response, $raw_response] = $tokenizer->tokenize($responsetext);
+    $docs = [];
+    $merged = [];
+    foreach ($documents as $doc) {
+      $tokens = $tokenizer->tokenize($doc);
+      $merged = array_merge($merged, $tokens['raw']);
+      $docs[] = $tokens['counted'];
+    }
 
-    $merged = array_merge($raw_answerkey, $raw_response);
-    $tok_answerkey = array_replace($merged, $counted_answerkey);
-    $tok_response = array_replace($merged, $counted_response);
+    for ($i = 0; $i < count($docs); $i++) {
+      $docs[$i] = array_replace($merged, $docs[$i]);
+    }
 
-    $sample = [$tok_answerkey, $tok_response];
-    $transformer = new tfidf_transformer($sample);
-    $transformer->transform($sample);
+    $tf_idf = new tfidf_transformer($docs);
+    $tf_idf->transform($docs);
 
-    return $sample;
+    return $docs;
   }
   
   /**
@@ -143,11 +153,22 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $answerkeytext = core_text::strtolower($answerkeytext);
 
-    $documents = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
-    [$tok_answerkey, $tok_response] = (new lsa())->transform(new matrix($documents));
+    $documents = [
+      $answerkeytext,
+      $responsetext
+    ];
+    
+    $documents = $this->preprocess($documents, $this->questionlanguage);
+    $documents = (new lsa())->transform(new matrix($documents));
+    
+    $cossim = new cosine_similarity();
 
-    $cossim = new cosine_similarity($tok_answerkey, $tok_response);
-    $similarity = $cossim->get_similarity();
+    // $sims = [];
+    // foreach ($documents as $doc) {
+    //   $sims[] = $cossim->get_similarity($documents[0], $doc);
+    // }
+
+    $similarity = $cossim->get_similarity($documents[0], $documents[1]);
 
     $state = null;
     
