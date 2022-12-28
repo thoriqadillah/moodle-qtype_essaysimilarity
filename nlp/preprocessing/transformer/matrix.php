@@ -42,7 +42,9 @@ class matrix {
 		$cols_b = count($matrix_b[0]);
 		
 		// multiplication cannot be done
-		if ($cols_a !== $rows_b) return $product;
+		if ($cols_a !== $rows_b) {
+      throw new InvalidArgumentException("Column A ($cols_a) and Row B ($rows_b) is not equal");
+    }
 
 		for($i = 0; $i < $rows_a; $i++){
 			for($j = 0; $j < $cols_b; $j++){

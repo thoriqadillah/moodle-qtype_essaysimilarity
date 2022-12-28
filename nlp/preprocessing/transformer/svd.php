@@ -62,19 +62,9 @@ class svd {
     $this->decompose();
   }
 
-  /**
-   * Perform truncated SVD
-   * 
-   * @param matrix $matrix Matrix class to perform calculation
-   * @param int|null $dimension desired dimension
-   * @return array transformed matrix
-   */
-  public static function transform($matrix, $dimension = null) {
-    return (new svd($matrix))->decompose()->truncate($dimension);
-  }
 
   /**
-   * Perform SVD
+   * Perform Singular Value Decomposition
    * Taken from SVD implementation from JAMA https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
    */
   public function decompose() {
@@ -523,13 +513,17 @@ class svd {
     }
 
 
-    // calculate the rank
+    // Calculate the rank
+    $EPS = pow(2, -52);
+    $TOL = max($m, $n) * $s[0] * $EPS;
     $rank = 0;
-    for($i = 0; $i < count($s); $i++){
-      if (round($s[$i], 4) > 0) $rank += 1;
+    for ($i = 0; $i < count($s); $i++) { 
+      if ($s[$i] > $TOL) {
+        ++$rank;
+      }
     }
-
-    // Low-Rank Approximation (K)
+    
+    // Low-Rank Approximation
     $q = 0.9;
     $K = 0;
     $frobA = 0;
@@ -539,15 +533,12 @@ class svd {
       for($i = 0; $i <= $K; $i++) $frobAk += $s[$i];
       $clt = $frobAk / $frobA;
       $K++;
-    } while($clt < $q);
+    } while ($clt < $q);
 
     // Calculate the multi-diagonal S
-    $S = [];
-    for($i = 0; $i < count($s); $i++) {
-      for ($j = 0; $j < count($s); $j++) {
-        $S[$i][$j] = 0;
-        $S[$i][$i] = $s[$i];
-      }
+    $S = array_fill(0, $m, array_fill(0, $n, 0));
+    for ($i = 0; $i < $m; $i++) {
+      $S[$i][$i] = $s[$i];
     }
 
     self::$U = $U;
@@ -555,26 +546,17 @@ class svd {
     self::$S = $S;
     self::$V = $V;
     self::$Vt = $this->matrix->transpose($V);
-    self::$K = $K;
     self::$rank = $rank;
+    self::$K = $K;
 
     return $this;
   }
 
   /**
-   * Truncate the decomposed matrix to certain dimension
-   * 
-   * @param int|null $dimension desired dimension
-   * @return array transformed matrix
+   * Truncate the matrix with low-rank approximation
    */
-  public function truncate($dimension = null) {
-    if ($dimension == null) {
-      return $this->get();
-    }
-
-    // reducing Sv and S to desired dimension
-    for ($i = $dimension; $i < count(self::$Sv); $i++) { 
-      self::$Sv[$i] = 0;
+  public function truncate() {
+    for ($i = self::$K; $i < count(self::$S); $i++) { 
       self::$S[$i][$i] = 0;
     }
 
@@ -586,7 +568,7 @@ class svd {
    * @return array transformed matrix
    */
   public function get() {
-    return $this->matrix->multiply(self::$U, $this->matrix->multiply(self::$S, self::$Vt));
+    return $this->matrix->multiply($this->matrix->multiply(self::$U, self::$S), self::$Vt);
   }
 
 }
