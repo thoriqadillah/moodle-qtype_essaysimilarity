@@ -146,28 +146,15 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    */
   public function grade_response($response) {
     $responsetext = $this->to_plaintext($response['answer'], $response['format']);
-    $responsetext = core_text::strtolower($responsetext);
+    $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
 
     $this->get_and_save_textstats($responsetext);
-    
-    $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
-    $answerkeytext = core_text::strtolower($answerkeytext);
 
-    $documents = [
-      $answerkeytext,
-      $responsetext
-    ];
-    
+    $documents = [$answerkeytext, $responsetext];
     $documents = $this->preprocess($documents, $this->questionlanguage);
     $documents = (new lsa())->transform(new matrix($documents));
     
     $cossim = new cosine_similarity();
-
-    // $sims = [];
-    // foreach ($documents as $doc) {
-    //   $sims[] = $cossim->get_similarity($documents[0], $doc);
-    // }
-
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);
 
     $state = null;

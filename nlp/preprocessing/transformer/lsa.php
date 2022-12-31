@@ -6,14 +6,12 @@ require_once('svd.php');
 class lsa {
 
   /**
-   * Perform latent semantic analysis to get the topic of the word
+   * Perform latent semantic analysis to get the most important topic of the word with dimensional reduction
    * @param matrix $matrix
    * @param int $features total feature that want to be extracted
    * 
    */
   public function transform($matrix) {
-    // Perform dimensional reduction to get the most important topic
-    $svd = new svd($matrix);
-    return $svd->truncate();
+    return (new svd($matrix))->truncate()->transform();
   }
 }

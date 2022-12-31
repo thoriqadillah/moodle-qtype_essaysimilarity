@@ -62,7 +62,6 @@ class svd {
     $this->decompose();
   }
 
-
   /**
    * Perform Singular Value Decomposition
    * Taken from SVD implementation from JAMA https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
@@ -559,15 +558,15 @@ class svd {
     for ($i = self::$K; $i < count(self::$S); $i++) { 
       self::$S[$i][$i] = 0;
     }
-
-    return $this->get();
+    
+    return $this;
   }
 
   /**
    * Get the decomposed matrix
    * @return array transformed matrix
    */
-  public function get() {
+  public function transform() {
     return $this->matrix->multiply($this->matrix->multiply(self::$U, self::$S), self::$Vt);
   }
 
