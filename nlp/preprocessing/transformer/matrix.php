@@ -3,14 +3,33 @@
 class matrix {
 
   private $matrix = [];
+  private $original = [];
 
   /**
    * @param array $matrix a multi-dimensional array
    */
   public function __construct($matrix) {
+    $this->original = $matrix;
+
+    // Convert string key to numerical key for operational
     foreach ($matrix as $mtx) {
       $this->matrix[] = array_values($mtx);
     }
+  }
+
+  /**
+   * Convert numerical key to string key for peeking
+   */
+  public function replace_original($with) {
+    foreach ($with as $index => $_) {
+      $i = 0;
+      foreach ($this->original[$index] as $key => $_) {
+        $this->original[$index][$key] = $with[$index][$i];
+        ++$i;
+      }
+    }
+
+    return $this->original;
   }
 
   public function truncate(&$matrix, $rows, $columns) {

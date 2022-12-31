@@ -13,5 +13,7 @@ class lsa {
    */
   public function transform($matrix) {
     return (new svd($matrix))->truncate()->transform();
+    // $transformed = (new svd($matrix))->truncate()->transform();
+    // return $matrix->replace_original($transformed);
   }
 }
