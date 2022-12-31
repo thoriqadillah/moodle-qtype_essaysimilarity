@@ -14,9 +14,6 @@ class lsa {
   public function transform($matrix) {
     // Perform dimensional reduction to get the most important topic
     $svd = new svd($matrix);
-    $A = $svd->truncate();
-
-    // Get word to topic
-    return $matrix->multiply($A, $svd::$V);
+    return $svd->truncate();
   }
 }
