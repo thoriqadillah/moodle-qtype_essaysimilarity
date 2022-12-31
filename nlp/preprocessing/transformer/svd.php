@@ -568,7 +568,7 @@ class svd {
    * @return array transformed matrix
    */
   public function get() {
-    return $this->matrix->multiply($this->matrix->multiply(self::$U, self::$S), self::$V);
+    return $this->matrix->multiply($this->matrix->multiply(self::$U, self::$S), self::$Vt);
   }
 
 }
