@@ -22,8 +22,15 @@ class lsa implements transformer {
    * Perform latent semantic analysis to get the most important topic of the word with dimensional reduction
    */
   public function transform() {
-    return (new svd($this->matrix))->truncate()->transform();
-    // $transformed = (new svd($this->matrix))->truncate()->transform();
-    // return $this->matrix->replace_original($transformed);
+    $transformed = (new svd($this->matrix))->truncate()->transform();
+    $original = $this->matrix->original();
+
+    foreach ($original as $i => $_) {
+      $original[$i] = array_combine(
+        array_keys($original[0]), array_values($transformed[$i])
+      );
+    }
+
+    return $original;
   }
 }

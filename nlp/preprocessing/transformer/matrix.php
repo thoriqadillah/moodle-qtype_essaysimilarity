@@ -17,17 +17,6 @@ class matrix {
     }
   }
 
-  /**
-   * Convert numerical key to string key for peeking
-   */
-  public function replace_original($with) {
-    foreach ($this->original as $i => $_) {
-      $this->original[$i] = array_combine(array_keys($this->original[0]), array_values($with[$i]));
-    }
-
-    return $this->original;
-  }
-
   public function truncate(&$matrix, $rows, $columns) {
     for ($i = 0; $i < count($matrix); $i++) {
       if ($i > $rows) {
@@ -37,9 +26,20 @@ class matrix {
     }
   }
 
+  /**
+   * Get the original matrix of documents
+   */
+  public function original() {
+    return $this->original;
+  }
+
+  /**
+   * Get matrix
+   */
   public function get() {
     return $this->matrix;
   }
+
   /**
 	 * Matrix multiplication
 	 * 
@@ -80,7 +80,7 @@ class matrix {
 	 */
 	public function transpose($matrix) {
     $result = [];
-
+    
 		$m = count($matrix);
 		$n = count($matrix[0]);
 
