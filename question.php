@@ -29,7 +29,7 @@ defined("MOODLE_INTERNAL") || die();
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/preprocessing/tokenizer.php');
-require_once('nlp/preprocessing/transformer/tfidf_transformer.php');
+require_once('nlp/preprocessing/transformer/tf_idf.php');
 require_once('nlp/preprocessing/transformer/matrix.php');
 require_once('nlp/preprocessing/transformer/lsa.php');
 
@@ -115,8 +115,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @param array $documents Documents that want to be pre-processed
    * @param string $lang Language of the documents
    */
-  private function preprocess($documents, $lang) {
-    $tokenizer = new tokenizer($lang);
+  private function preprocess($documents) {
+    $tokenizer = new tokenizer($this->questionlanguage);
     
     $docs = [];
     $merged = [];
@@ -130,9 +130,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       $docs[$i] = array_replace($merged, $docs[$i]);
     }
 
-    $tf_idf = new tfidf_transformer($docs);
-    $tf_idf->transform($docs);
-
+    $docs = (new tf_idf($docs))->transform();
     return $docs;
   }
   
@@ -151,8 +149,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $this->get_and_save_textstats($responsetext);
 
     $documents = [$answerkeytext, $responsetext];
-    $documents = $this->preprocess($documents, $this->questionlanguage);
-    $documents = (new lsa())->transform(new matrix($documents));
+    $documents = $this->preprocess($documents);
+    $documents = (new lsa(new matrix($documents)))->transform();
     
     $cossim = new cosine_similarity();
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);

@@ -24,8 +24,7 @@ class matrix {
     foreach ($with as $index => $_) {
       $i = 0;
       foreach ($this->original[$index] as $key => $_) {
-        $this->original[$index][$key] = $with[$index][$i];
-        ++$i;
+        $this->original[$index][$key] = $with[$index][$i++];
       }
     }
 

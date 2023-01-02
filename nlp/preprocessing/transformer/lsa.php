@@ -1,19 +1,29 @@
 <?php
 
+require_once('transformer.php');
 require_once('matrix.php');
 require_once('svd.php');
 
-class lsa {
+class lsa implements transformer {
+
+  /**
+   * @var matrix 
+   */
+  private $matrix;
+
+  /**
+   * @param matrix $matrix Matrix object
+   */
+  public function __construct($matrix) {
+    $this->matrix = $matrix;
+  }
 
   /**
    * Perform latent semantic analysis to get the most important topic of the word with dimensional reduction
-   * @param matrix $matrix
-   * @param int $features total feature that want to be extracted
-   * 
    */
-  public function transform($matrix) {
-    return (new svd($matrix))->truncate()->transform();
-    // $transformed = (new svd($matrix))->truncate()->transform();
-    // return $matrix->replace_original($transformed);
+  public function transform() {
+    return (new svd($this->matrix))->truncate()->transform();
+    // $transformed = (new svd($this->matrix))->truncate()->transform();
+    // return $this->matrix->replace_original($transformed);
   }
 }
