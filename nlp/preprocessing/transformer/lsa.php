@@ -12,10 +12,10 @@ class lsa implements transformer {
   private $matrix;
 
   /**
-   * @param matrix $matrix Matrix object
+   * @param array $documents 
    */
-  public function __construct($matrix) {
-    $this->matrix = $matrix;
+  public function __construct($documents) {
+    $this->matrix = new matrix($documents);
   }
 
   /**

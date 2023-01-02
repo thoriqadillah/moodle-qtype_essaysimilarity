@@ -150,7 +150,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     $documents = [$answerkeytext, $responsetext];
     $documents = $this->preprocess($documents);
-    $documents = (new lsa(new matrix($documents)))->transform();
+    $documents = (new lsa($documents))->transform();
     
     $cossim = new cosine_similarity();
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);
