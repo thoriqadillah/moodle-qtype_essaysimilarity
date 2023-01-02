@@ -21,11 +21,8 @@ class matrix {
    * Convert numerical key to string key for peeking
    */
   public function replace_original($with) {
-    foreach ($with as $index => $_) {
-      $i = 0;
-      foreach ($this->original[$index] as $key => $_) {
-        $this->original[$index][$key] = $with[$index][$i++];
-      }
+    foreach ($this->original as $i => $_) {
+      $this->original[$i] = array_combine(array_keys($this->original[0]), array_values($with[$i]));
     }
 
     return $this->original;
