@@ -22,7 +22,9 @@ class matrix {
       if ($i > $rows) {
         array_splice($matrix, $rows);
         break;
-      } else array_splice($matrix, $columns);
+      }
+      
+      array_splice($matrix, $columns);
     }
   }
 
@@ -50,26 +52,23 @@ class matrix {
 	public function multiply($matrix_a, $matrix_b) {
 		$product = [];
 
-		$rows_a = count($matrix_a);
 		$cols_a = count($matrix_a[0]);
-
 		$rows_b = count($matrix_b);
-		$cols_b = count($matrix_b[0]);
 		
 		// multiplication cannot be done
 		if ($cols_a !== $rows_b) {
       throw new InvalidArgumentException("Column A ($cols_a) and Row B ($rows_b) is not equal");
     }
 
-		for($i = 0; $i < $rows_a; $i++){
-			for($j = 0; $j < $cols_b; $j++){
-				for($p = 0; $p < $cols_a; $p++){
-					$product[$i][$j] += $matrix_a[$i][$p] * $matrix_b[$p][$j];
-				}
-			}
-		}
-		
-		return $product;
+    foreach ($matrix_a as $i => $_) {
+      foreach ($matrix_b[0] as $j => $_) {
+        foreach ($matrix_a[0] as $p => $_) {
+          $product[$i][$j] += $matrix_a[$i][$p] * $matrix_b[$p][$j];
+        }
+      }
+    }
+    
+    return $product;
 	}
 
 	/**
@@ -80,16 +79,13 @@ class matrix {
 	 */
 	public function transpose($matrix) {
     $result = [];
-    
-		$m = count($matrix);
-		$n = count($matrix[0]);
 
-    for($i = 0; $i < $n; $i++){
-      for($j = 0; $j < $m; $j++){
+    foreach ($matrix as $i => $_) {
+      foreach ($matrix[0] as $j => $_) {
         $result[$i][$j] = $matrix[$j][$i];
       }
     }
-
+    
     return $result;
 	}
 
@@ -102,41 +98,12 @@ class matrix {
   public function round($matrix) {
     $result = [];
 
-    $m = count($matrix);
-    $n = count($matrix[0]);
-    
-    for($i = 0; $i < $m; $i++){
-      for($j = 0; $j < $n; $j++){
-        $result[$i][$j] = round($matrix[$i][$j], 2);
+    foreach ($matrix as $i => $_) {
+      foreach ($matrix[0] as $j => $_) {
+        $result[$i][$j] = round($matrix[$j][$i], 2);
       }
     }
 
     return $result;
-  }
-
-  public function construct($matrix, $rows, $columns) {
-    $neo_matrix = [];
-    for($i = 0; $i < $rows; $i++){
-      for($j = 0; $j < $columns; $j++){
-        $neo_matrix[$i][$j] = $matrix[$i][$j];
-      }
-    }
-
-    return $neo_matrix;
-  }
-
-  public function pythag($a, $b) {
-    $a = abs($a);
-    $b = abs($b);
-
-    if ($a > $b) {
-      return $a * sqrt(1.0 + pow($b/$a, 2));
-    }
-
-    if ($b > 0.0) {
-      return $b * sqrt(1.0 + pow($a/$b, 2));
-    }
-
-    return 0;
   }
 }

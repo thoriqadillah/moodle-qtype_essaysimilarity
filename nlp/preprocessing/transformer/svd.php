@@ -74,7 +74,7 @@ class svd implements transformer {
     $nu = min($m, $n);
 
     //Copy matrix to A
-    $A =  $this->matrix->construct($this->matrix->get(), $m, $n);
+    $A =  $this->matrix->get();
     
     $s = array_fill(0, min($m+1, $n), 0);
     $U = array_fill(0, $m, array_fill(0, $nu, 0));
