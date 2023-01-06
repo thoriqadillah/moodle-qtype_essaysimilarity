@@ -61,6 +61,7 @@ class svd implements transformer {
   public function __construct($matrix) {
     $this->matrix = $matrix;
     $this->decompose();
+    $this->truncate();
   }
 
   /**
@@ -548,8 +549,6 @@ class svd implements transformer {
     self::$Vt = $this->matrix->transpose($V);
     self::$rank = $rank;
     self::$K = $K;
-
-    return $this;
   }
 
   /**
@@ -559,8 +558,6 @@ class svd implements transformer {
     for ($i = self::$K; $i < count(self::$S); $i++) { 
       self::$S[$i][$i] = 0;
     }
-    
-    return $this;
   }
 
   /**

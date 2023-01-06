@@ -28,10 +28,9 @@ defined("MOODLE_INTERNAL") || die();
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
-require_once('nlp/preprocessing/tokenizer.php');
-require_once('nlp/preprocessing/transformer/tf_idf.php');
-require_once('nlp/preprocessing/transformer/matrix.php');
-require_once('nlp/preprocessing/transformer/lsa.php');
+require_once('nlp/tokenizer.php');
+require_once('nlp/transformer/tf_idf.php');
+require_once('nlp/transformer/lsa.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
