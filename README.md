@@ -6,7 +6,6 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview3](pix/preview3.png)
 ![preview4](pix/preview4.png)
 ![preview5](pix/preview5.png)
-![preview6](pix/preview6.png)
 ## Features
 - Auto grading
 - Support every language (see notes)
