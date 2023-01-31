@@ -1,6 +1,6 @@
 <?php
 
-include('../stemmer/stemmer.php');
+include($CFG->dirroot.'/question/essaysimilarity/nlp/preprocessing/stemmer/stemmer.php');
 
 class stopword {
   protected $stopwords = [];
