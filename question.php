@@ -133,7 +133,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response($response) {
-      //print_r($response);
+
     $responsetext = $this->to_plaintext($response['answer'], $response['answerformat']);
     $responsetext = core_text::strtolower($responsetext);
 
