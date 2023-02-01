@@ -1,6 +1,7 @@
 <?php
 
-include($CFG->dirroot.'/question/type/essaysimilarity/nlp/preprocessing/stemmer/stemmer.php');
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/preprocessing/stemmer/stemmer.php');
 
 class stopword {
   protected $stopwords = [];
@@ -17,7 +18,7 @@ class stopword {
    */
   public function remove_stopword($token, $stemmer) {
     $token = array_udiff($token, $this->stopwords, 'strcasecmp');
-    
+
     foreach ($token as &$tok) {
       $tok = $stemmer->stem($tok);
     }

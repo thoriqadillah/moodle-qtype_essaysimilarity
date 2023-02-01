@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/lib/questionlib.php');
 /**
  * The essaysimilarity question type renderer.
  *
- * @copyright  2022 Atthoriq Adillah Wicaksana 
+ * @copyright  2022 Atthoriq Adillah Wicaksana
  * @copyright  based on work by 2022 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,7 +61,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
 
     // answer textarea field.
     $step = $qa->get_last_step_with_qt_var('answer');
-    
+
     if (!$step->has_qt_var('answer') && empty($options->readonly)) {
       $step = new question_attempt_step(['answer' => $question->responsetemplate]);
     }
@@ -86,7 +86,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
 
     $answer_attr = ['class' => 'answer'];
     if ($options->readonly) {
-      $answer_attr['style'] = 'background-color: #fff; 
+      $answer_attr['style'] = 'background-color: #fff;
                               padding: 0.1em;
                               margin: 10px 0px;';
     }
@@ -115,6 +115,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     $plugin_name = $this->plugin_name();
     $question = $qa->get_question();
 
+
     $showteacher = empty($this->displayoptions->context) ? false : has_capability('mod/quiz:grade', $this->displayoptions->context);
     $showstudent = $showteacher ? false : has_capability('mod/quiz:attempt', $this->displayoptions->context);
 
@@ -122,7 +123,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     $show = [
       $this->get_constant('SHOW_NONE') => false,
       $this->get_constant('SHOW_STUDENTS_ONLY') => $showstudent,
-      $this->get_constant('SHOW_TEACHERS_ONLY') => $showteacher, 
+      $this->get_constant('SHOW_TEACHERS_ONLY') => $showteacher,
       $this->get_constant('SHOW_TEACHERS_AND_STUDENTS') => $showstudent || $showteacher
     ];
 
@@ -133,7 +134,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       $step = $qa->get_last_step_with_behaviour_var('finish');
       if ($step->get_id()) {
         $output .= html_writer::tag('p', $question->answerkey);
-      } 
+      }
     }
 
     // show text statistic if user choose so and stats item is selected at least one
@@ -141,13 +142,13 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     $showtextstats = $show[$question->showtextstats] && strlen(trim($question->textstatitems));
     if ($showtextstats) {
       $strmanager = get_string_manager();
-      
+
       $table = new html_table();
       $table->attributes['class'] = 'generaltable essaysimilarity review stats';
-      
+
       $statsitem = explode(',', $question->textstatitems);
       $response = $qa->get_last_qt_data();
-      $response = $question->to_plaintext($response['answer'], $response['format']);
+      $response = $question->to_plaintext($response['answer'], $response['answerformat']);
       $textstats = $question->get_textstats($response);
 
       foreach ($statsitem as $item) {
@@ -171,17 +172,18 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     }
 
     // display plagiarism links if any
-    $response = $qa->get_last_qt_data(); 
+    $response = $qa->get_last_qt_data();
     $plagiarism_content = $question->get_plagiarism($response);
     if (!empty($plagiarism_content)) {
       $output .= html_writer::tag('h5', get_string('plagiarismcheck', $plugin_name));
-  
+
       $plagiarism = [];
       foreach ($plagiarism_content as $link) {
         $plagiarism[] = html_writer::tag('a', $link, ['href' => $link]);
       }
+//print_r($plagiarism);
 
-      $plagiarism = implode(html_writer::empty_tag('br', $plagiarism));
+      $plagiarism = implode(html_writer::empty_tag('br', $plagiarism), $plagiarism);
       $output .= $plagiarism;
     }
 
@@ -192,14 +194,14 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       $output .= html_writer::tag('h5', get_string('feedbacksection', $plugin_name));
 
       $maxgrade = $qa->get_max_mark();
-      
+
       $step = $qa->get_last_step_with_behaviour_var('finish');
       if ($step->get_id()) {
         $grade = format_float($step->get_fraction() * $maxgrade, $float_precision);
       } else {
         $grade = $qa->format_mark($float_precision);
       }
-      
+
       $output .= html_writer::tag('p', get_string('feedback', $plugin_name, $grade));
     }
 
@@ -230,7 +232,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
   public function manual_comment(question_attempt $qa, question_display_options $options) {
     $comment = '';
     if ($options->manualcomment != question_display_options::EDITABLE) return $comment;
-    
+
     $plugin = $this->plugin_name();
     $question = $qa->get_question();
 
