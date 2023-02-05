@@ -147,7 +147,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
       
       $statsitem = explode(',', $question->textstatitems);
       $response = $qa->get_last_qt_data();
-      $response = $question->to_plaintext($response['answer'], $response['format']);
+      $response = $question->to_plaintext($response['answer'], $response['answerformat']);
       $textstats = $question->get_textstats($response);
 
       foreach ($statsitem as $item) {
@@ -181,7 +181,7 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
         $plagiarism[] = html_writer::tag('a', $link, ['href' => $link]);
       }
 
-      $plagiarism = implode(html_writer::empty_tag('br', $plagiarism));
+      $plagiarism = implode(html_writer::empty_tag('br', $plagiarism), $plagiarism);
       $output .= $plagiarism;
     }
 

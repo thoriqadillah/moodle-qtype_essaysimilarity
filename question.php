@@ -142,7 +142,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response($response) {
-    $responsetext = $this->to_plaintext($response['answer'], $response['format']);
+    $responsetext = $this->to_plaintext($response['answer'], $response['answerformat']);
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
 
     $this->get_and_save_textstats($responsetext);
@@ -168,7 +168,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   }
 
   public function get_plagiarism($response) {
-    global $CFG, $PAGE;
+    global $CFG, $PAGE, $USER;
     require_once($CFG->dirroot.'/lib/plagiarismlib.php');
 
     $plagiarism = [];
@@ -176,10 +176,10 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     if (!$CFG->enableplagiarism) return $plagiarism;
 
-    list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
+    [$context, $course, $cm] = get_context_info_array($PAGE->context->id);
     $plagiarismparams = [
       'userid' => $USER->id,
-      'text' => $responsetext
+      'text' => $response
     ];
 
     if ($course) {
