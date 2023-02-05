@@ -1,6 +1,5 @@
 <?php
 
-require_once('transformer.php');
 require_once('matrix.php');
 require_once('svd.php');
 
@@ -22,22 +21,25 @@ class lsa {
    * Perform latent semantic analysis to get the most important topic of the word with dimensional reduction
    */
   public function transform() {
-
     $svd = new svd($this->matrix);
-    $S = $svd->S();
+    $M = $this->matrix->get();
+    $V = $svd->V();
 
     // Truncate the matrix with low-rank approximation
-    for ($i = $svd->K(); $i < count($S); $i++) { 
-      $S[$i][$i] = 0;
+    for ($i = 0; $i < count($V); $i++) { 
+      for ($j = $svd->K(); $j < count($V[0]); $j++) { 
+        $V[$i][$j] = 0;
+      }
     }
 
-    // Perform LSA
-    $lsa = $this->matrix->multiply($this->matrix->multiply($svd->U(), $S), $svd->VT());
+    $lsa = $this->matrix->multiply($M, $V); // Perform LSA
+    
+    $documents = $this->matrix->original();
     $transformed = [];
 
-    foreach ($this->matrix->original() as $i => $_) {
+    foreach ($documents as $i => $_) {
       $transformed[$i] = array_combine(
-        array_keys($this->matrix->original()[0]), array_values($lsa[$i])
+        array_keys($documents[0]), array_values($lsa[$i])
       );
     }
 
