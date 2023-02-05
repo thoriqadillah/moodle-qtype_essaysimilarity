@@ -1,7 +1,5 @@
 <?php
 
-require_once('transformer.php');
-
 class tf_idf {
 
   private $documents = [];

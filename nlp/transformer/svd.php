@@ -1,7 +1,6 @@
 <?php
 
 require_once('matrix.php');
-require_once('transformer.php');
 
 class svd {
 
