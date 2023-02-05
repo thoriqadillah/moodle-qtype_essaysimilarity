@@ -1,6 +1,7 @@
 <?php
 
-include('./../stemmer.php');
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.php');
 /**
  * Copyright 2013 Katharopoulos Angelos <katharas@gmail.com>
  *
