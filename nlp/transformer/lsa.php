@@ -4,7 +4,7 @@ require_once('transformer.php');
 require_once('matrix.php');
 require_once('svd.php');
 
-class lsa implements transformer {
+class lsa {
 
   /**
    * @var matrix 
@@ -22,12 +22,22 @@ class lsa implements transformer {
    * Perform latent semantic analysis to get the most important topic of the word with dimensional reduction
    */
   public function transform() {
-    $svd = (new svd($this->matrix))->transform();
+
+    $svd = new svd($this->matrix);
+    $S = $svd->S();
+
+    // Truncate the matrix with low-rank approximation
+    for ($i = $svd->K(); $i < count($S); $i++) { 
+      $S[$i][$i] = 0;
+    }
+
+    // Perform LSA
+    $lsa = $this->matrix->multiply($this->matrix->multiply($svd->U(), $S), $svd->VT());
     $transformed = [];
 
     foreach ($this->matrix->original() as $i => $_) {
       $transformed[$i] = array_combine(
-        array_keys($this->matrix->original()[0]), array_values($svd[$i])
+        array_keys($this->matrix->original()[0]), array_values($lsa[$i])
       );
     }
 

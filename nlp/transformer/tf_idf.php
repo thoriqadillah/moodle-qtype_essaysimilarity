@@ -2,7 +2,7 @@
 
 require_once('transformer.php');
 
-class tf_idf implements transformer {
+class tf_idf {
 
   private $documents = [];
   private $idf = [];

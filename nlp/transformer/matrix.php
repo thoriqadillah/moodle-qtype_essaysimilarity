@@ -10,11 +10,6 @@ class matrix {
    */
   public function __construct($matrix) {
     $this->original = $matrix;
-
-    // Convert string key to numerical key for operational
-    foreach ($matrix as $mtx) {
-      $this->matrix[] = array_values($mtx);
-    }
   }
 
   public function truncate(&$matrix, $rows, $columns) {
@@ -36,10 +31,17 @@ class matrix {
   }
 
   /**
-   * Get matrix
+   * Get matrix from the original documents vector
    */
   public function get() {
-    return $this->matrix;
+    $matrix = [];
+
+    // Convert string key to numerical key for operational
+    foreach ($this->original as $mtx) {
+      $matrix[] = array_values($mtx);
+    }
+
+    return $matrix;
   }
 
   /**

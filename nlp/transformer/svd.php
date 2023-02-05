@@ -3,55 +3,33 @@
 require_once('matrix.php');
 require_once('transformer.php');
 
-class svd implements transformer {
+class svd {
 
   /**
    * Left singular vector
    * @var array
    */
-  public static $U  = [];
+  private $U  = [];
 
   /**
    * One-dimensional array of singular vector
    * @var array
    */
-  public static $Sv  = [];
-
-  /**
-   * Diagonal matrix of singular vector
-   * @var array
-   */
-  public static $S = [];
+  private $Sv  = [];
 
   /**
    * Right singular vector
    * @var array
    */
-  public static $V  = [];
-
-  /**
-   * Transposed right singular vector
-   * @var array
-   */
-  public static $Vt = [];
-
-  /**
-   * Low-rank Approximation
-   * @var int
-   */
-  public static $K;
-
-  /**
-   * Rank
-   * @var int
-   */
-  public static $rank;
+  private $V  = [];
 
   /**
    * Matrix that being passed
    * @var matrix
    */
   private $matrix = [];
+
+  private $m, $n;
 
   /**
    * Perform SVD
@@ -60,8 +38,10 @@ class svd implements transformer {
    */
   public function __construct($matrix) {
     $this->matrix = $matrix;
+    $this->m = count($this->matrix->get());
+    $this->n = count($this->matrix->get()[0]);
+
     $this->decompose();
-    $this->truncate();
   }
 
   /**
@@ -70,8 +50,8 @@ class svd implements transformer {
    */
   public function decompose() {
     // Convert array key from string to numeric
-    $m = count($this->matrix->get());
-    $n = count($this->matrix->get()[0]);
+    $m = $this->m;
+    $n = $this->n;
     $nu = min($m, $n);
 
     //Copy matrix to A
@@ -113,7 +93,7 @@ class svd implements transformer {
         }
 
         $s[$k] = -$s[$k];
-      }
+      }      
 
       for ($j = $k+1; $j < $n; $j++) {
         if (($k < $nct) && ($s[$k] != 0.0))  {
@@ -409,7 +389,7 @@ class svd implements transformer {
           $c = ($sp*$epm1) * ($sp*$epm1);
           $shift = 0.0;
 
-          if (($b != 0.0) | ($c != 0.0)) {
+          if (($b != 0.0) || ($c != 0.0)) {
             $shift = sqrt($b*$b + $c);
             if ($b < 0.0) $shift = -$shift;
             $shift = $c / ($b + $shift);
@@ -512,60 +492,64 @@ class svd implements transformer {
         break;
       }
     }
+   
+    $this->U = $U;
+    $this->Sv = $s;
+    $this->V = $V;
+  }
 
+  public function U() {
+    return $this->U;
+  }
 
-    // Calculate the rank
+  /**
+   * Calculate the multi-diagonal S
+   */
+  public function S() {
+    $S = array_fill(0, $this->m, array_fill(0, $this->n, 0));
+    for ($i = 0; $i < $this->m; $i++) {
+      $S[$i][$i] = $this->Sv[$i];
+    }
+ 
+    return $S;
+  }
+
+  public function V() {
+    return $this->V;
+  }
+
+  public function VT() {
+    return $this->matrix->transpose($this->V);
+  }
+
+  public function rank() {
     $EPS = pow(2, -52);
-    $TOL = max($m, $n) * $s[0] * $EPS;
+    $TOL = max($this->m, $this->n) * $this->Sv[0] * $EPS;
     $rank = 0;
-    for ($i = 0; $i < count($s); $i++) { 
-      if ($s[$i] > $TOL) {
+    for ($i = 0; $i < count($this->Sv); $i++) { 
+      if ($this->Sv[$i] > $TOL) {
         ++$rank;
       }
     }
-    
-    // Low-Rank Approximation
+
+    return $rank;
+  }
+  
+  /**
+   * Low rank approximation
+   */
+  public function K() {
     $q = 0.9;
     $K = 0;
     $frobA = 0;
     $frobAk = 0;
-    for($i = 0; $i < $rank; $i++) $frobA += $s[$i];
+    for($i = 0; $i < $this->rank(); $i++) $frobA += $this->Sv[$i];
     do {
-      for($i = 0; $i <= $K; $i++) $frobAk += $s[$i];
+      for($i = 0; $i <= $K; $i++) $frobAk += $this->Sv[$i];
       $clt = $frobAk / $frobA;
       $K++;
     } while ($clt < $q);
 
-    // Calculate the multi-diagonal S
-    $S = array_fill(0, $m, array_fill(0, $n, 0));
-    for ($i = 0; $i < $m; $i++) {
-      $S[$i][$i] = $s[$i];
-    }
-
-    self::$U = $U;
-    self::$Sv = $s;
-    self::$S = $S;
-    self::$V = $V;
-    self::$Vt = $this->matrix->transpose($V);
-    self::$rank = $rank;
-    self::$K = $K;
+    return $K;
   }
-
-  /**
-   * Truncate the matrix with low-rank approximation
-   */
-  public function truncate() {
-    for ($i = self::$K; $i < count(self::$S); $i++) { 
-      self::$S[$i][$i] = 0;
-    }
-  }
-
-  /**
-   * Get the decomposed matrix
-   * @return array transformed matrix
-   */
-  public function transform() {
-    return $this->matrix->multiply($this->matrix->multiply(self::$U, self::$S), self::$Vt);
-  }
-
 }
