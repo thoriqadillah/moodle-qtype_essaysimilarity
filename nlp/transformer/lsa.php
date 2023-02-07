@@ -22,24 +22,22 @@ class lsa {
    */
   public function transform() {
     $svd = new svd($this->matrix);
-    $M = $this->matrix->get();
-    $V = $svd->V();
+    $S = $svd->S();
 
     // Truncate the matrix with low-rank approximation
-    for ($i = 0; $i < count($V); $i++) { 
-      for ($j = $svd->K(); $j < count($V[0]); $j++) { 
-        $V[$i][$j] = 0;
-      }
+    for ($i = $svd->K(); $i < count($S); $i++) { 
+      $S[$i][$i] = 0;
     }
 
-    $lsa = $this->matrix->multiply($M, $V); // Perform LSA
+    // Perform LSA
+    $lsa = $this->matrix->multiply(
+      $this->matrix->multiply($svd->U(), $S), $svd->VT()
+    );
     
-    $documents = $this->matrix->original();
     $transformed = [];
-
-    foreach ($documents as $i => $_) {
+    foreach ($this->matrix->original() as $i => $_) {
       $transformed[$i] = array_combine(
-        array_keys($documents[0]), array_values($lsa[$i])
+        array_keys($this->matrix->original()[0]), array_values($lsa[$i])
       );
     }
 
