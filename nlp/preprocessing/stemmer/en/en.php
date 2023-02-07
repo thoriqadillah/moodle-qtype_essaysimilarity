@@ -1,6 +1,8 @@
 <?php
 
-include('./../stemmer.php');
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/preprocessing/stemmer/stemmer.php');
+
 /**
  * Copyright 2013 Katharopoulos Angelos <katharas@gmail.com>
  *
@@ -10,8 +12,8 @@ include('./../stemmer.php');
  * http://www.tartarus.org/~martin/PorterStemmer
  *
  * The rewrite instead of using Richard Heyes's implementation has
- * been to improve performance. 
- * 
+ * been to improve performance.
+ *
  * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Stemmers/PorterStemmer.php
  */
 class en_stemmer implements stemmer {
@@ -52,7 +54,7 @@ class en_stemmer implements stemmer {
     $c = $this->b[$i];
     if (isset(self::$vowels[$c])) {
       return false;
-    } 
+    }
 
     if ($c === 'y') {
       return ($i === 0) ? true : !$this->cons($i-1);
@@ -103,7 +105,7 @@ class en_stemmer implements stemmer {
 
   /**
    * vowelinstem() is TRUE <=> 0,...j contains a vowel
-   * 
+   *
    * */
   protected function vowelinstem() {
     for ($i = 0; $i <= $this->j; $i++) {
@@ -114,7 +116,7 @@ class en_stemmer implements stemmer {
   }
 
   /**
-   * doublec(j) is TRUE <=> j,(j-1) contain a double consonant. 
+   * doublec(j) is TRUE <=> j,(j-1) contain a double consonant.
    *  */
   protected function doublec($j) {
     if ($j < 1) return false;
@@ -192,17 +194,17 @@ class en_stemmer implements stemmer {
    *  meeting   ->  meet
    *  milling   ->  mill
    *  messing   ->  mess
-   *   
+   *
    *  meetings  ->  meet
    *
    * */
   protected function step1ab() {
     if ($this->b[$this->k] === 's') {
-      if ($this->ends("sses",4)) 
+      if ($this->ends("sses",4))
         $this->k -= 2;
-      else if ($this->ends("ies",3)) 
+      else if ($this->ends("ies",3))
         $this->setto("i",1);
-      else if ($this->b[$this->k-1] !== 's') 
+      else if ($this->b[$this->k-1] !== 's')
         $this->k--;
     }
 
