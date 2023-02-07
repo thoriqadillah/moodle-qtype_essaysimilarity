@@ -31,7 +31,7 @@ After that go to site administration page and it should shows that new plugin is
 ## Add Your Language
 Pre-processing is pretty important to improve the accuracy of the similarity checker. Pre-processing will clean the documents such as removing stopwords, stem the words and weight the value of each word so the documents we are comparing is in the same class. If you select `none`, it will only do the weighting for each word. If you want to add your language, you need to do the following:
 
-1. Add list of stopword of your language inside `essaysimilarity/nlp/preprocessing/stopword/lang`, and add a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language. For example, english is en, therefore the name is `en.php`. And inside the file, return an array of list of the stopword
+1. Add list of stopword of your language inside `essaysimilarity/nlp/stopword/lang`, and add a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language. For example, english is en, therefore the name is `en.php`. And inside the file, return an array of list of the stopword
 ```php
 <?php
 
@@ -39,13 +39,14 @@ return [
   // list of stopwords of your language
 ];
 ```
-2. Add folder of your language inside `essaysimilarity/nlp/preprocessing/stemmer/` named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). Inside that folder you must create a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).php i.e `en.php`. 
+2. Add folder of your language inside `essaysimilarity/nlp/stemmer/` named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). Inside that folder you must create a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).php i.e `en.php`. 
 Everything else is optional, i.e dictionary.php is for list of root words from your language. If the dictionary.php is present, the content of the file needs to return array of root words of your language, just like stop words part. The content of `LANG_CODE.php` file needs to be as follows:
    
 ```php
 <?php
 
-include('./../stemmer.php');
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.php');
 
 class LANG_CODE_stemmer implements stemmer { // change the LANG_CODE with ISO 639-1 of your language, i.e en => en_stemmer
 
@@ -72,29 +73,3 @@ Finally, you can submit your code as contribution to this plugin so people can m
 [GPL v3](https://github.com/thoriqadillah/essaysimilarity/blob/main/LICENSE)
 
 Thanks to (@gbateson) Gordon Bateson's [plugin](https://github.com/gbateson/moodle-qtype_essayautograde) that helps me to build my own plugin
-
-60
-58
-74
-69
-74
-73
-65
-75
-65
-61
-66
-78
-69
-66
-71
-82
-67
-70
-58
-76
-58
-76
-67
-76
-63
