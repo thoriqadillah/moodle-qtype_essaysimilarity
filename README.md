@@ -11,6 +11,7 @@ Is a moodle question type plugin that compares the similarity between student's 
 - Support every language (see notes)
 - Answer key
 - Statistical text
+- Score threshold for determining if the answer is correct, partialy correct, or wrong
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
 
 ## Installation

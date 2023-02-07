@@ -37,7 +37,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
     return question_engine::make_archetypal_behaviour($preferredbehaviour, $qa);
   }
-  
+
   /**
    * In situations where is_gradable_response() returns false, this method
    * should generate a description of what the problem is.
@@ -46,7 +46,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    */
   public function get_validation_error($response) {
     // check if we have a text answer
-    if (empty($response['answer']) && empty($response['attachments'])) { 
+    if (empty($response['answer']) && empty($response['attachments'])) {
       return get_string('noresponse', 'quiz');
     }
 
@@ -81,8 +81,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     // get all text stats and then save to DB according what user choose in form editing
     $textstats_table = 'question_answer_stats';
     $oldtextstats = $DB->get_record($textstats_table, ['questionid' => $this->id, 'userid' => $USER->id]);
-    
-    $stats = $this->get_stats($responsetext); 
+
+    $stats = $this->get_stats($responsetext);
     $textstatitems = explode(',', $this->textstatitems);
     $textstats = (object) [
       'questionid' => $this->id,
@@ -108,7 +108,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     return $this->get_and_save_textstats($responsetext, true);
   }
 
-  /**
+  /*
    * Pre-process the documents
    * 
    * @param array $documents Documents that want to be pre-processed
@@ -132,7 +132,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $docs = (new tf_idf($docs))->transform();
     return $docs;
   }
-  
+
   /**
    * Grade a response to the question, returning a fraction between
    * get_min_fraction() and get_max_fraction(), and the corresponding {@link question_state}
@@ -155,7 +155,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);
 
     $state = null;
-    
+
     if ($similarity > $this->upper_correctness) {
       $state = question_state::$gradedright;
     } else if ($similarity < $this->lower_correctness) {
@@ -239,7 +239,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   }
 
   /**
-   * Standardize white space in $text. Html-entity for non-breaking space, $nbsp; 
+   * Standardize white space in $text. Html-entity for non-breaking space, $nbsp;
    * is converted to a unicode character, "\xc2\xa0", that can be simulated by two ascii chars (194,160)
    * @param string $text
    * @return string
@@ -258,7 +258,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
   /**
    * Get statistical count of the response
-   * @param string $responsetext 
+   * @param string $responsetext
    */
   private function get_stats($responsetext) {
     $precision = 0;
@@ -478,7 +478,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       'able' => 2,
       'adaptable' => 4,
       'incredible' => 4,
-      'syllable' => 3, 
+      'syllable' => 3,
       'table' => 2,
 
       // final "cle" as 1-syllable

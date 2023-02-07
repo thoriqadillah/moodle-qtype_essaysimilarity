@@ -18,7 +18,7 @@ class stopword {
    */
   public function remove_stopword($token, $stemmer) {
     $token = array_udiff($token, $this->stopwords, 'strcasecmp');
-    
+
     foreach ($token as &$tok) {
       $tok = $stemmer->stem($tok);
     }
