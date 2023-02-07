@@ -28,8 +28,9 @@ defined("MOODLE_INTERNAL") || die();
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
-require_once('nlp/preprocessing/tokenizer.php');
-require_once('nlp/preprocessing/tfidf_transformer.php');
+require_once('nlp/tokenizer.php');
+require_once('nlp/transformer/tf_idf.php');
+require_once('nlp/transformer/lsa.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -107,21 +108,29 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     return $this->get_and_save_textstats($responsetext, true);
   }
 
-  private function preprocess($answerkeytext, $responsetext, $lang) {
-    $tokenizer = new tokenizer($lang);
+  /*
+   * Pre-process the documents
+   * 
+   * @param array $documents Documents that want to be pre-processed
+   * @param string $lang Language of the documents
+   */
+  private function preprocess($documents) {
+    $tokenizer = new tokenizer($this->questionlanguage);
+    
+    $docs = [];
+    $merged = [];
+    foreach ($documents as $doc) {
+      $tokens = $tokenizer->tokenize(strtolower($doc));
+      $merged = array_merge($merged, $tokens['raw']);
+      $docs[] = $tokens['counted'];
+    }
 
-    list($counted_answerkey, $raw_answerkey) = $tokenizer->tokenize($answerkeytext);
-    list($counted_response, $raw_response) = $tokenizer->tokenize($responsetext);
+    for ($i = 0; $i < count($docs); $i++) {
+      $docs[$i] = array_replace($merged, $docs[$i]);
+    }
 
-    $merged = array_merge($raw_answerkey, $raw_response);
-    $tok_answerkey = array_replace($merged, $counted_answerkey);
-    $tok_response = array_replace($merged, $counted_response);
-
-    $sample = [$tok_answerkey, $tok_response];
-    $transformer = new tfidf_transformer($sample);
-    $transformer->transform($sample);
-
-    return $sample;
+    $docs = (new tf_idf($docs))->transform();
+    return $docs;
   }
 
   /**
@@ -133,19 +142,17 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response($response) {
-
     $responsetext = $this->to_plaintext($response['answer'], $response['answerformat']);
-    $responsetext = core_text::strtolower($responsetext);
+    $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
 
     $this->get_and_save_textstats($responsetext);
 
-    $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
-    $answerkeytext = core_text::strtolower($answerkeytext);
-
-    list($tok_answerkey, $tok_response) = $this->preprocess($answerkeytext, $responsetext, $this->questionlanguage);
-
-    $cossim = new cosine_similarity($tok_answerkey, $tok_response);
-    $similarity = $cossim->get_similarity();
+    $documents = [$answerkeytext, $responsetext];
+    $documents = $this->preprocess($documents);
+    $documents = (new lsa($documents))->transform();
+    
+    $cossim = new cosine_similarity();
+    $similarity = $cossim->get_similarity($documents[0], $documents[1]);
 
     $state = null;
 
@@ -169,7 +176,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     if (!$CFG->enableplagiarism) return $plagiarism;
 
-    list($context, $course, $cm) = get_context_info_array($PAGE->context->id);
+    [$context, $course, $cm] = get_context_info_array($PAGE->context->id);
     $plagiarismparams = [
       'userid' => $USER->id,
       'text' => $response

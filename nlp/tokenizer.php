@@ -2,9 +2,9 @@
 
 require_once('stopword/stopword.php');
 require_once('stemmer/stemmer.php');
+
 class tokenizer {
 
-  const PATTERN = '/[\pZ\pC]+/u';
   private $lang = 'none';
 
   public function __construct($lang) {
@@ -19,7 +19,7 @@ class tokenizer {
    */
   public function tokenize($str) {
     $str = $this->normalize($str);
-    $token = preg_split(self::PATTERN, $str, -1, PREG_SPLIT_NO_EMPTY);
+    $token = preg_split('/[\pZ\pC]+/u', $str, -1, PREG_SPLIT_NO_EMPTY);
     
     // we assume that stemmer implementation and stopword dictionary for certain language is present, or errors will be thrown
     if ($this->lang !== 'none') {
@@ -37,7 +37,10 @@ class tokenizer {
       return 0;
     }, $raw);
     
-    return [array_count_values($token), $raw];
+    return [
+      'counted' => array_count_values($token),
+      'raw' => $raw
+    ];
   }
 
   /**
@@ -46,6 +49,7 @@ class tokenizer {
   protected function normalize($str) {
     $str = preg_replace('/[^a-z -]/im', ' ', $str);
     $str = preg_replace('/( +)/im', ' ', $str);
+    $str = str_replace('- ', '', $str);
 
     return trim($str);
   }

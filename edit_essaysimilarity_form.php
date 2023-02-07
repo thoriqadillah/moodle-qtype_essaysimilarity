@@ -206,7 +206,7 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
   private function language_options() {
     global $CFG;
 
-    $dir = $CFG->dirroot.'/question/type/essaysimilarity/nlp/preprocessing/stopword/lang';
+    $dir = $CFG->dirroot.'/question/type/essaysimilarity/nlp/stopword/lang';
     $plugin = $this->plugin_name();
 
     // get all file from preprocessing/stopword/lang and make them as options

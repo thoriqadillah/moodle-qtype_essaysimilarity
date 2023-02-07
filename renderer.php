@@ -182,7 +182,6 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
         $plagiarism[] = html_writer::tag('a', $link, ['href' => $link]);
       }
 
-
       $plagiarism = implode(html_writer::empty_tag('br', $plagiarism), $plagiarism);
       $output .= $plagiarism;
     }
