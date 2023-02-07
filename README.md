@@ -1,5 +1,5 @@
 # Essay Similarity
-Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using cosine similarity (main branch) or TS-SS ([ts-ss branch](https://github.com/thoriqadillah/essaysimilarity/tree/ts-ss)) algorithm, and uses the similarity to auto grade the answer. The automatic grade can be manually overridden by the teacher
+Is a moodle question type plugin that compares the similarity between student's answer and teacher's answer key using machine learning (natural language processing), and uses the similarity to auto grade the answer. The automatic grade can be manually overridden by the teacher
 ## Previews
 ![preview1](pix/preview1.png)
 ![preview2](pix/preview2.png)
@@ -72,3 +72,29 @@ Finally, you can submit your code as contribution to this plugin so people can m
 [GPL v3](https://github.com/thoriqadillah/essaysimilarity/blob/main/LICENSE)
 
 Thanks to (@gbateson) Gordon Bateson's [plugin](https://github.com/gbateson/moodle-qtype_essayautograde) that helps me to build my own plugin
+
+60
+58
+74
+69
+74
+73
+65
+75
+65
+61
+66
+78
+69
+66
+71
+82
+67
+70
+58
+76
+58
+76
+67
+76
+63
