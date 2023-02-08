@@ -6,6 +6,8 @@ Is a moodle question type plugin that compares the similarity between student's 
 ![preview3](pix/preview3.png)
 ![preview4](pix/preview4.png)
 ![preview5](pix/preview5.png)
+![preview6](pix/preview6.png)
+![preview7](pix/preview7.png)
 ## Features
 - Auto grading
 - Support every language (see notes)
@@ -13,6 +15,9 @@ Is a moodle question type plugin that compares the similarity between student's 
 - Statistical text
 - Score threshold for determining if the answer is correct, partialy correct, or wrong
 - Show/hide the answer key, statistical text, and feedback to student/teacher/both
+
+## Demo
+You can try out the demo for this plugin on [this link](https://thoriqadillah.github.io/cat-n-code/projects/essay-similarity/#demo)
 
 ## Installation
 You can choose the following method that suits you to install the plugin
