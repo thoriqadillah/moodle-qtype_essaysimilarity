@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * TF-IDF implementation with some modification
+ * Credit to @jorgecasas from his PHP-ML library. Copied from https://github.com/jorgecasas/php-ml/blob/develop/src/FeatureExtraction/TfIdfTransformer.php
+ */
 class tf_idf {
 
   private $documents = [];

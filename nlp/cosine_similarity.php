@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Cosine Similarity Implementaion
+ * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Similarity/CosineSimilarity.php
+ */
 class cosine_similarity {
 
   private function product($v1, $v2) {
