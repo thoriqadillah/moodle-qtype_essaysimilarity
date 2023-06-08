@@ -24,7 +24,7 @@ You can choose the following method that suits you to install the plugin
 ### Using Terminal
 Go to your moodle root directory and execute the following command
 ```
-git clone https://github.com/thoriqadillah/essaysimilarity.git question/type/essaysimilarity
+git clone https://github.com/thoriqadillah/moodle-qtype_essaysimilarity.git question/type/essaysimilarity
 ```
 ### Manual
 Download the zip and extract it to the question/type inside your moodle root directory
