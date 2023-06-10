@@ -45,7 +45,7 @@ class svd {
 
   /**
    * Perform Singular Value Decomposition
-   * Taken from SVD implementation from JAMA https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
+   * Translation of JAMA SVD implementation to PHP https://github.com/fiji/Jama/blob/master/src/main/java/Jama/SingularValueDecomposition.java
    */
   public function decompose() {
     // Convert array key from string to numeric
