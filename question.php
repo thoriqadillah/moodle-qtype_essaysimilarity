@@ -79,7 +79,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     global $USER, $DB;
 
     // get all text stats and then save to DB according what user choose in form editing
-    $textstats_table = 'question_answer_stats';
+    $textstats_table = 'qtype_essaysimilarity_stats';
     $oldtextstats = $DB->get_record($textstats_table, ['questionid' => $this->id, 'userid' => $USER->id]);
 
     $stats = $this->get_stats($responsetext);

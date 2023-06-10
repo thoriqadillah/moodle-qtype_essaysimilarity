@@ -65,6 +65,10 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
     }
 
     $renderer = $question->get_format_renderer($this->page);
+    if (method_exists($renderer, 'set_displayoptions')) {
+      $renderer->set_displayoptions($options); // Moodle 4.x and later
+    }
+    
     $linecount = $question->responsefieldlines;
 
     $answer = $renderer->response_area_input('answer', $qa, $step, $linecount, $options->context);
