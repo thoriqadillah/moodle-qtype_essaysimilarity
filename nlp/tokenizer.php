@@ -8,7 +8,7 @@ class tokenizer {
   private $lang = 'none';
 
   public function __construct($lang) {
-    $this->lang = $lang;
+    $this->lang = clean_param($lang, PARAM_ALPHA);
   }
 
   /**
@@ -21,7 +21,7 @@ class tokenizer {
     $str = $this->normalize($str);
     $token = preg_split('/[\pZ\pC]+/u', $str, -1, PREG_SPLIT_NO_EMPTY);
     
-    // we assume that stemmer implementation and stopword dictionary for certain language is present, or errors will be thrown
+    // we assume that stemmer implementation and stopword dictionary for certain language is present, otherwise errors will be thrown
     if ($this->lang !== 'none') {
       require_once("stemmer/$this->lang/$this->lang.php");
 

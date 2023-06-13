@@ -27,6 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/lib/questionlib.php');
+require_once($CFG->dirroot.'/question/type/essay/renderer.php');
 /**
  * The essaysimilarity question type renderer.
  *
@@ -400,7 +401,6 @@ class qtype_essaysimilarity_renderer extends qtype_renderer {
 
 }
 
-require_once($CFG->dirroot.'/question/type/essay/renderer.php');
 /**
  * An essaysimilarity format renderer for essaysimilaritys where the student should not enter
  * any inline response.

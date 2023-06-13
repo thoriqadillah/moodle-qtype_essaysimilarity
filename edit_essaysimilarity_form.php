@@ -24,8 +24,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use function PHPUnit\Framework\returnSelf;
-
 defined('MOODLE_INTERNAL') || die();
 
 //get parent class
@@ -72,7 +70,7 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $label = get_string($name, $plugin);
     $mform->addElement('select', $name, $label, $this->language_options());
     $mform->addHelpButton($name, $name, $plugin);
-    $mform->setType($name, PARAM_TEXT);
+    $mform->setType($name, PARAM_ALPHA);
     $mform->setDefault($name, $this->get_default($name, $this->get_constant('NO_LANG')));
     
     
