@@ -30,11 +30,11 @@ $plugin->cron      = 0;
 $plugin->component = 'qtype_essaysimilarity';
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2015111600; // Moodle 3.0
-$plugin->version   = 2023020700;
-$plugin->release   = '2023-02-07 (16)';
+$plugin->version   = 2023062200;
+$plugin->release   = '2023-06-22 (2)';
 
 // https://docs.moodle.org/dev/Releases
-// Moodle 3.11 2021051700 17 May 2021
+// Moodle 3.11 2021051700 17 May 20`21
 // Moodle 3.10 2020110900 9 Nov 2020
 // Moodle 3.9 2020061500 15 Jun 2020 <= LTS
 // Moodle 3.8 2019111800 18 Nov 2019
