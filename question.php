@@ -24,13 +24,12 @@
 
 defined("MOODLE_INTERNAL") || die();
 
-
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/tokenizer.php');
 require_once('nlp/transformer/tf_idf.php');
-require_once('nlp/transformer/lsa.php');
+require_once('nlp/transformer/svd.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
 
@@ -129,7 +128,22 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
       $docs[$i] = array_replace($merged, $docs[$i]);
     }
 
-    $docs = (new tf_idf($docs))->transform();
+    return $docs;
+  }
+
+  /**
+   * @param array $documents the documents that want to be transformed
+   * @param array $transformer
+   * @return array $documents transformed documents
+   */
+  private function transform($documents, ...$transformers) {
+    $docs = $documents;
+    $matrix = new matrix($docs);
+
+    foreach ($transformers as $transformer) {
+      $docs = $transformer->transform($matrix);
+    }
+    
     return $docs;
   }
 
@@ -149,7 +163,10 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     $documents = [$answerkeytext, $responsetext];
     $documents = $this->preprocess($documents);
-    $documents = (new lsa($documents))->transform();
+    $documents = $this->transform($documents, 
+      new tf_idf(),
+      new svd(),
+    );
     
     $cossim = new cosine_similarity();
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);

@@ -1,18 +1,14 @@
 <?php
 
+require_once('transformer.php');
 /**
  * TF-IDF implementation with some modification
  * Credit to @jorgecasas from his PHP-ML library. Copied from https://github.com/jorgecasas/php-ml/blob/develop/src/FeatureExtraction/TfIdfTransformer.php
  */
-class tf_idf {
+class tf_idf implements transofrmer {
 
   private $documents = [];
   private $idf = [];
-
-  public function __construct($documents) {
-    $this->documents = $documents;
-    if (count($this->documents) > 0) $this->fit();
-  }
 
   private function count_idf() {
     $this->idf = array_fill_keys(array_keys($this->documents[0]), 0);
@@ -35,13 +31,17 @@ class tf_idf {
     }
   }
 
-  public function transform() {
+  public function transform($matrix) {
+    $this->documents = $matrix->original();
+    if (count($this->documents) > 0) $this->fit();
+
     foreach ($this->documents as &$document) {
       foreach ($document as $index => &$feature) {
         $feature *= $this->idf[$index];
       }
     }
 
+    $matrix->set($this->documents);
     return $this->documents;
   }
 }

@@ -2,7 +2,6 @@
 
 class matrix {
 
-  private $matrix = [];
   private $original = [];
 
   /**
@@ -28,6 +27,14 @@ class matrix {
    */
   public function original() {
     return $this->original;
+  }
+
+  /**
+   * Update the original matrix of documents
+   * @param array $documents
+   */
+  public function set($documents) {
+    $this->original = $documents;
   }
 
   /**
