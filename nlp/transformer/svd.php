@@ -564,7 +564,6 @@ class svd implements transofrmer {
       );
     }
 
-    $matrix->set($transformed);
     return $transformed;
   }
 }

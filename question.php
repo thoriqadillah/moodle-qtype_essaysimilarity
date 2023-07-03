@@ -142,6 +142,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     foreach ($transformers as $transformer) {
       $docs = $transformer->transform($matrix);
+      $matrix->set($docs);
     }
     
     return $docs;

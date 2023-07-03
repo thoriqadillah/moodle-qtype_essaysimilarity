@@ -41,7 +41,6 @@ class tf_idf implements transofrmer {
       }
     }
 
-    $matrix->set($this->documents);
     return $this->documents;
   }
 }
