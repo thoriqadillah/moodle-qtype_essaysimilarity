@@ -1,8 +1,7 @@
 <?php
 
-require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stopword/stopword.php');
-require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.php');
-require_once('tokenizer.php');
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/tokenizer/tokenizer.php');
 
 class en_tokenizer implements tokenizer {
 

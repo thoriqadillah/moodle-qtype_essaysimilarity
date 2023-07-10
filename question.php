@@ -27,6 +27,8 @@ defined("MOODLE_INTERNAL") || die();
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/stopword/stopword.php');
+require_once('nlp/stemmer/factory.php');
+require_once('nlp/tokenizer/factory.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/transformer/tf_idf.php');
 require_once('nlp/transformer/svd.php');
@@ -167,20 +169,15 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
   public function grade_response($response) {
     $lang = clean_param($this->questionlanguage, PARAM_ALPHA);
 
-    require_once("nlp/stemmer/".$lang."/".$lang.".php");
-    require_once("nlp/tokenizer/".$lang.".php");
-
     $responsetext = $this->to_plaintext($response['answer'], $response['answerformat']);
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
     $documents = [$answerkeytext, $responsetext];
 
     $this->get_and_save_textstats($responsetext);
     
-    $tokenizer = $lang.'_tokenizer';
-    $stemmer = $lang.'_stemmer';
-    
-    $documents = $this->preprocess($documents, new $tokenizer(), 
-      new $stemmer(), 
+    $documents = $this->preprocess($documents, 
+      tokenizer_factory::create($lang), 
+      stemmer_factory::create($lang), 
       new stopword($lang)
     );
 
@@ -192,17 +189,15 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $cossim = new cosine_similarity();
     $similarity = $cossim->get_similarity($documents[0], $documents[1]);
 
-    $state = null;
-
     if ($similarity > $this->upper_correctness) {
-      $state = question_state::$gradedright;
-    } else if ($similarity < $this->lower_correctness) {
-      $state = question_state::$gradedwrong;
-    } else {
-      $state = question_state::$gradedpartial;
+      return [$similarity, question_state::$gradedright];
     }
 
-    return [$similarity, $state];
+    if ($similarity < $this->lower_correctness) {
+      return [$similarity, question_state::$gradedwrong];
+    }
+
+    return [$similarity, question_state::$gradedpartial];
   }
 
   public function get_plagiarism($response) {
