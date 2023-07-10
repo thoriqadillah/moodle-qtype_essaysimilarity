@@ -26,8 +26,8 @@ defined("MOODLE_INTERNAL") || die();
 
 // require the parent class
 require_once($CFG->dirroot.'/question/type/essay/question.php');
+require_once('nlp/stopword/stopword.php');
 require_once('nlp/cosine_similarity.php');
-require_once('nlp/tokenizer.php');
 require_once('nlp/transformer/tf_idf.php');
 require_once('nlp/transformer/svd.php');
 
@@ -113,15 +113,23 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @param array $documents Documents that want to be pre-processed
    * @param string $lang Language of the documents
    */
-  private function preprocess($documents) {
-    $tokenizer = new tokenizer($this->questionlanguage);
-    
+  private function preprocess(array $documents, tokenizer $tokenizer, ...$cleaners): array {
     $docs = [];
     $merged = [];
     foreach ($documents as $doc) {
-      $tokens = $tokenizer->tokenize(strtolower($doc));
-      $merged = array_merge($merged, $tokens['raw']);
-      $docs[] = $tokens['counted'];
+      // we assume that stemmer implementation and stopword dictionary for certain language is present, otherwise errors will be thrown
+      $token = $tokenizer->tokenize($doc);
+      foreach ($cleaners as $cleaner) {
+        $token = $cleaner->clean($token);
+      }
+
+      $raw = array_flip($token);
+      $raw = array_map(function() {
+        return 0;
+      }, $raw);
+      
+      $merged = array_merge($merged, $raw);
+      $docs[] = array_count_values($token);
     }
 
     for ($i = 0; $i < count($docs); $i++) {
@@ -157,13 +165,25 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @return array (float, integer) the fraction, and the state.
    */
   public function grade_response($response) {
+    $lang = clean_param($this->questionlanguage, PARAM_ALPHA);
+
+    require_once("nlp/stemmer/".$lang."/".$lang.".php");
+    require_once("nlp/tokenizer/".$lang.".php");
+
     $responsetext = $this->to_plaintext($response['answer'], $response['answerformat']);
     $answerkeytext = $this->to_plaintext($this->answerkey, $this->answerkeyformat);
+    $documents = [$answerkeytext, $responsetext];
 
     $this->get_and_save_textstats($responsetext);
+    
+    $tokenizer = $lang.'_tokenizer';
+    $stemmer = $lang.'_stemmer';
+    
+    $documents = $this->preprocess($documents, new $tokenizer(), 
+      new $stemmer(), 
+      new stopword($lang)
+    );
 
-    $documents = [$answerkeytext, $responsetext];
-    $documents = $this->preprocess($documents);
     $documents = $this->transform($documents, 
       new tf_idf(),
       new svd(),
