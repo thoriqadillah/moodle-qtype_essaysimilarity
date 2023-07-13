@@ -1,8 +1,8 @@
 <?php
 
-require_once('matrix.php');
+require_once('transformer.php');
 
-class svd {
+class svd implements transofrmer {
 
   /**
    * Left singular vector
@@ -29,19 +29,6 @@ class svd {
   private $matrix = [];
 
   private $m, $n;
-
-  /**
-   * Perform SVD
-   * 
-   * @param matrix $matrix Matrix class to perform calculation
-   */
-  public function __construct($matrix) {
-    $this->matrix = $matrix;
-    $this->m = count($this->matrix->get());
-    $this->n = count($this->matrix->get()[0]);
-
-    $this->decompose();
-  }
 
   /**
    * Perform Singular Value Decomposition
@@ -550,5 +537,33 @@ class svd {
     } while ($clt < $q);
 
     return $K;
+  }
+
+  public function transform($matrix) {
+    $this->matrix = $matrix;
+    $this->m = count($this->matrix->get());
+    $this->n = count($this->matrix->get()[0]);
+
+    $this->decompose();
+    $S = $this->S();
+
+    // Truncate the matrix with low-rank approximation
+    for ($i = $this->K(); $i < count($S); $i++) { 
+      $S[$i][$i] = 0;
+    }
+
+    // Perform LSA
+    $lsa = $this->matrix->multiply(
+      $this->matrix->multiply($this->U(), $S), $this->VT()
+    );
+    
+    $transformed = [];
+    foreach ($this->matrix->original() as $i => $_) {
+      $transformed[$i] = array_combine(
+        array_keys($this->matrix->original()[0]), array_values($lsa[$i])
+      );
+    }
+
+    return $transformed;
   }
 }

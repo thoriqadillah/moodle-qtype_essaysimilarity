@@ -15,7 +15,7 @@ require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.p
  *
  * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Stemmers/PorterStemmer.php
  */
-class en_stemmer implements stemmer {
+class en_stemmer extends stemmer {
 
   protected static $vowels = [
     'a' => 'a',
@@ -417,7 +417,7 @@ class en_stemmer implements stemmer {
       $this->k--;
   }
 
-  public function stem($word) {
+  public function stem(string $word): string {
     $this->j=0;
     $this->b = $word;
     $this->k = strlen($word)-1;

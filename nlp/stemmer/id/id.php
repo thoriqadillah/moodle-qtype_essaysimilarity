@@ -7,7 +7,7 @@ require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.p
  * Stemming bahasa indonesia menggunakan algoritma Nazief dan Adriani
  * Credit to @ilhamdp10, copied and modified from https://github.com/ilhamdp10/algoritma-stemming-nazief-adriani/blob/master/enhanced_CS.php
  */
-class id_stemmer implements stemmer {
+class id_stemmer extends stemmer {
 
   private $kamus;
 
@@ -1010,7 +1010,7 @@ class id_stemmer implements stemmer {
     }
   }
 
-  public function stem($word) {
+  public function stem(string $word): string {
     // Jika Ada maka kata tersebut adalah kata dasar
     if ($this->cek_kamus($word)) return $word;
 

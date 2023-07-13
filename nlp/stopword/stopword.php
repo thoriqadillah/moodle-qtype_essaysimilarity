@@ -1,28 +1,17 @@
 <?php
 
 global $CFG;
-require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.php');
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/cleaner/cleaner.php');
 
-class stopword {
-  protected $stopwords = [];
+class stopword implements cleaner {
+  
+  protected array $stopwords = [];
 
-  public function __construct($lang) {
+  public function __construct(string $lang) {
     $this->stopwords = require("lang/$lang.php");
   }
 
-  /**
-   * Remove stop word from token and then stem the token
-   * @param array $token
-   * @param stemmer $stemmer stemmer interface
-   * @return array cleaned token
-   */
-  public function remove_stopword($token, $stemmer) {
-    $token = array_udiff($token, $this->stopwords, 'strcasecmp');
-
-    foreach ($token as &$tok) {
-      $tok = $stemmer->stem($tok);
-    }
-
-    return $token;
+  public function clean(array $token): array {
+    return array_udiff($token, $this->stopwords, 'strcasecmp');
   }
 }
