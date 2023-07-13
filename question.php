@@ -120,7 +120,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $merged = [];
     foreach ($documents as $doc) {
       // we assume that stemmer implementation and stopword dictionary for certain language is present, otherwise errors will be thrown
-      $vector = $vectorizer->vectorize($doc);
+      $vector = $vectorizer->vectorize(strtolower($doc));
       foreach ($cleaners as $cleaner) {
         $vector = $cleaner->clean($vector);
       }
