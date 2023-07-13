@@ -6,7 +6,7 @@ require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/vectorizer/vector
 class en_whitespace_vectorizer implements vectorizer {
 
   /**
-   * Whitespace tokenizer
+   * Whitespace vectorizer
    * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers/WhitespaceTokenizer.php
    */
   public function vectorize(string $str): array {

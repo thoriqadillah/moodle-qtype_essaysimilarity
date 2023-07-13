@@ -11,6 +11,4 @@ class whitespace_vectorizer {
         $vectorizer = $lang."_whitespace_vectorizer";
         return new $vectorizer();
     }
-
-
 }
