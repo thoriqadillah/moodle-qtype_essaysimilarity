@@ -1,15 +1,15 @@
 <?php
 
 global $CFG;
-require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/tokenizer/tokenizer.php');
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/vectorizer/vectorizer.php');
 
-class en_tokenizer implements tokenizer {
+class en_whitespace_vectorizer implements vectorizer {
 
   /**
    * Whitespace tokenizer
    * Credit to @angeloskath, copied from https://github.com/angeloskath/php-nlp-tools/blob/master/src/NlpTools/Tokenizers/WhitespaceTokenizer.php
    */
-  public function tokenize(string $str): array {
+  public function vectorize(string $str): array {
     $str = $this->normalize($str);
     $token = preg_split('/[\pZ\pC]+/u', $str, -1, PREG_SPLIT_NO_EMPTY);
 

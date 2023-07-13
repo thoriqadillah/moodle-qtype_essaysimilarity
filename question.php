@@ -28,7 +28,7 @@ defined("MOODLE_INTERNAL") || die();
 require_once($CFG->dirroot.'/question/type/essay/question.php');
 require_once('nlp/stopword/stopword.php');
 require_once('nlp/stemmer/factory.php');
-require_once('nlp/tokenizer/factory.php');
+require_once('nlp/vectorizer/whitespace_vectorizer/whitespace_vectorizer.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/transformer/tf_idf.php');
 require_once('nlp/transformer/svd.php');
@@ -115,12 +115,12 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
    * @param array $documents Documents that want to be pre-processed
    * @param string $lang Language of the documents
    */
-  private function preprocess(array $documents, tokenizer $tokenizer, ...$cleaners): array {
+  private function preprocess(array $documents, vectorizer $vectorizer, ...$cleaners): array {
     $docs = [];
     $merged = [];
     foreach ($documents as $doc) {
       // we assume that stemmer implementation and stopword dictionary for certain language is present, otherwise errors will be thrown
-      $token = $tokenizer->tokenize($doc);
+      $token = $vectorizer->vectorize($doc);
       foreach ($cleaners as $cleaner) {
         $token = $cleaner->clean($token);
       }
@@ -175,15 +175,15 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     $this->get_and_save_textstats($responsetext);
     
-    $documents = $this->preprocess($documents, 
-      tokenizer_factory::create($lang), 
-      stemmer_factory::create($lang), 
-      new stopword($lang)
+    // $documents = $this->preprocess($documents, whitespace_vectorizer::create($lang), stemmer_factory::create($lang), new stopword($lang));
+    $documents = $this->preprocess($documents, whitespace_vectorizer::create($lang), 
+      new stopword($lang), 
+      stemmer_factory::create($lang)
     );
 
     $documents = $this->transform($documents, 
-      new tf_idf(),
-      new svd(),
+      new tf_idf(), 
+      new svd()
     );
     
     $cossim = new cosine_similarity();
