@@ -109,20 +109,21 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     return $this->get_and_save_textstats($responsetext, true);
   }
 
-  /*
-   * Pre-process the documents
-   * 
-   * @param array $documents Documents that want to be pre-processed
-   * @param string $lang Language of the documents
-   */
-  private function preprocess(array $documents, vectorizer $vectorizer, ...$cleaners): array {
+  private function preprocess(array $documents, ...$preprocessor): array {
     $docs = [];
     $merged = [];
     foreach ($documents as $doc) {
       // we assume that stemmer implementation and stopword dictionary for certain language is present, otherwise errors will be thrown
-      $vector = $vectorizer->vectorize(strtolower($doc));
-      foreach ($cleaners as $cleaner) {
-        $vector = $cleaner->clean($vector);
+
+      $vector = [];
+      foreach ($preprocessor as $proc) {
+        if ($proc instanceof vectorizer) {
+          $vector = $proc->vectorize(strtolower($doc));
+        }
+
+        if ($proc instanceof cleaner) {
+          $vector = $proc->clean($vector);
+        }
       }
 
       $raw = array_flip($vector);
@@ -176,7 +177,8 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $this->get_and_save_textstats($responsetext);
     
     // $documents = $this->preprocess($documents, whitespace_vectorizer::create($lang), stemmer_factory::create($lang), new stopword($lang));
-    $documents = $this->preprocess($documents, whitespace_vectorizer::create($lang), 
+    $documents = $this->preprocess($documents, 
+      whitespace_vectorizer::create($lang), 
       new stopword($lang), 
       stemmer_factory::create($lang)
     );

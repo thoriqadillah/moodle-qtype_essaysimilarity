@@ -33,7 +33,8 @@ After that go to site administration page and it should shows that new plugin is
 
 ## Notes
 - This plugin does not intent to replace teacher evaluation for grading student response. Instead, what this plugin intent is to help easen teacher's evaluation process. For example, if multiple responses has similarity 0.80, 0.88, 0.78, 0.30, and 0.25, maybe you should only manually re-evaluate the student's response with the score 0.30 and 0.25, and only quick skim the rest for final grading
-- In general, this plugin supports every language, but this plugin will be more accurate if it has the implementation of specific language for pre-processing. You can select `none` if your language is not detected in question language option
+- In general, this plugin supports every language, but this plugin will be more accurate if it has the implementation of specific language for pre-processing. You can select `none` if your language is not detected in question language. Note that if you choose `none` the result will not be optimal. So, if you want to add your language to the option, you need to implement some things in this plugin. Most of them you can find on the internet
+
 ## Add Your Language
 Pre-processing is pretty important to improve the accuracy of the similarity checker. Pre-processing will clean the documents such as removing stopwords, stem the words and weight the value of each word so the documents we are comparing is in the same class. If you select `none`, it will only do the weighting for each word. If you want to add your language, you need to do the following:
 
@@ -45,6 +46,7 @@ return [
   // list of stopwords of your language
 ];
 ```
+
 2. Add folder of your language inside `essaysimilarity/nlp/stemmer/` named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes). Inside that folder you must create a file named with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes).php i.e `en.php`. 
 Everything else is optional, i.e dictionary.php is for list of root words from your language. If the dictionary.php is present, the content of the file needs to return array of root words of your language, just like stop words part. The content of `LANG_CODE.php` file needs to be as follows:
    
@@ -54,9 +56,11 @@ Everything else is optional, i.e dictionary.php is for list of root words from y
 global $CFG;
 require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/stemmer/stemmer.php');
 
-class LANG_CODE_stemmer implements stemmer { // change the LANG_CODE with ISO 639-1 of your language, i.e en => en_stemmer
+// change the LANG with ISO 639-1 of your language, i.e en => en_stemmer
+class LANG_stemmer extends stemmer { 
 
-  private $dictionary; // you can change the variable to match your language i.e dictionary -> kamus in indonesia
+  // you can change the variable to match your language i.e dictionary -> kamus in indonesia
+  private $dictionary; 
 
   // (optional) if your stemming implementation needs dictionary, then import it this way
   public function __construct() {
@@ -69,9 +73,26 @@ class LANG_CODE_stemmer implements stemmer { // change the LANG_CODE with ISO 63
 }
 ```
 
-3. Last but not least, add string in `essaysimilarity/lang` with `language_<LANG_CODE>` where the `LANG_CODE` is the [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language, i.e `$string['language_en'] = English`. After that, purge the cache of language string on site administration page and you should see your language in Question Language option. 
+3. Implement `whitespace_vectorizer` of your language. Like any other parts of this plugin, you need to implement with specific name in order to make it works. You need to name the file with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) e.g `en.php`. After that, you need to make class named with `LANG_whitespace_vectorizer` and change the `LANG` with [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language. After that, you need to implements `vectorizer` like this
+
+```php
+<?php
+
+global $CFG;
+require_once($CFG->dirroot.'/question/type/essaysimilarity/nlp/vectorizer/vectorizer.php');
+
+// change the LANG with ISO 639-1 of your language, i.e en => en_whitespace_vectorizer
+class LANG_whitespace_vectorizer implements vectorizer {
+
+  public function vectorize(string $str): array {
+    // your implementation of vecotizer 
+  }
+}
+```
+
+4. Last but not least, add string in `essaysimilarity/lang` with `language_<LANG_CODE>` where the `LANG_CODE` is the [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of your language, i.e `$string['language_en'] = English`. After that, purge the cache of language string on site administration page and you should see your language in Question Language option. 
    
-2. (Optional) translate the entire language string of this plugin. People from the same country of yours may use this plugin and they use the translation. But may be they not. We never know :)
+5. (Optional) translate the entire language string of this plugin. People from the same country of yours may use this plugin and they use the translation. But may be they not. We never know :)
 
 Finally, you can submit your code as contribution to this plugin so people can make use of your code :)
 
