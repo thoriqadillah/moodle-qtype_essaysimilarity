@@ -539,7 +539,7 @@ class svd implements transofrmer {
     return $K;
   }
 
-  public function transform($matrix) {
+  public function transform(matrix $matrix): array {
     $this->matrix = $matrix;
     $this->m = count($this->matrix->get());
     $this->n = count($this->matrix->get()[0]);

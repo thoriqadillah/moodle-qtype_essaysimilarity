@@ -31,7 +31,7 @@ class tf_idf implements transofrmer {
     }
   }
 
-  public function transform($matrix) {
+  public function transform(matrix $matrix): array {
     $this->documents = $matrix->original();
     if (count($this->documents) > 0) $this->fit();
 

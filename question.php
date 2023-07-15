@@ -31,6 +31,7 @@ require_once('nlp/stemmer/factory.php');
 require_once('nlp/vectorizer/whitespace_vectorizer/whitespace_vectorizer.php');
 require_once('nlp/cosine_similarity.php');
 require_once('nlp/transformer/tf_idf.php');
+require_once('nlp/transformer/pmi.php');
 require_once('nlp/transformer/svd.php');
 
 class qtype_essaysimilarity_question extends qtype_essay_question implements question_automatically_gradable {
@@ -180,8 +181,11 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
     $documents = $this->preprocess($documents, 
       whitespace_vectorizer::create($lang), 
       new stopword($lang), 
-      stemmer_factory::create($lang)
+      stemmer_factory::create($lang),
+      new pmi(),
     );
+
+
 
     $documents = $this->transform($documents, 
       new tf_idf(), 
@@ -211,7 +215,7 @@ class qtype_essaysimilarity_question extends qtype_essay_question implements que
 
     if (!$CFG->enableplagiarism) return $plagiarism;
 
-    [$context, $course, $cm] = get_context_info_array($PAGE->context->id);
+    [$_, $course, $cm] = get_context_info_array($PAGE->context->id);
     $plagiarismparams = [
       'userid' => $USER->id,
       'text' => $response
