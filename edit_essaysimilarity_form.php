@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/question/type/essay/edit_essay_form.php');
 class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
 
   /** Number of rows in TEXTAREA elements */
-  const TEXTAREA_ROWS = 5;
+  const TEXTAREA_ROWS = 10;
 
   protected function definition_inner($mform) {
     parent::definition_inner($mform);
@@ -213,8 +213,10 @@ class qtype_essaysimilarity_edit_form extends qtype_essay_edit_form {
     $files = scandir($dir);
     $files = array_splice($files, 2);
     foreach ($files as $file) {
-      $lang = substr($file, 0, 2);
-      $options[$lang] = get_string('language_'.$lang, $plugin);
+        if ($file === 'none.php') continue;
+
+        $lang = substr($file, 0, 2);
+        $options[$lang] = get_string('language_'.$lang, $plugin);
     }
 
     return $options;
