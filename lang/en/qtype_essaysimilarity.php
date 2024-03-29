@@ -73,7 +73,8 @@ $string['pluginname_link'] = 'question/type/essaysimilarity';
 $string['pluginnameadding'] = 'Adding an essay similarity question';
 $string['pluginnameediting'] = 'Editing an essay similarity question';
 $string['pluginnamesummary'] = 'Allows an essay as a question response that will be graded automatically by comparing the similarity between the response and teacher answer key. The grade may be overridden later.';
-$string['privacy:metadata'] = 'The essay similarity question type plugin does not store any personal data.';
+$string['privacy:metadata:qtype_essaysimilarity'] = "Information about question's answer statistics. This is used to create relationship between question's answer statistics to the student";
+$string['privacy:metadata:qtype_essaysimilarity:userid'] = "The ID of the student that related to the question's answer statistics";
 
 $string['questionlanguage'] = 'Question language';
 $string['questionlanguage_help'] = 'Specify the question language for pre-processing purpose to increase the accuracy of the auto grading. If your language does not listed here, select none. See the following link to know how to add your language';
