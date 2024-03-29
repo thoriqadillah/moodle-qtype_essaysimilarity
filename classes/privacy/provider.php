@@ -25,16 +25,18 @@
 
 namespace qtype_essaysimilarity\privacy;
 
+use core_privacy\local\metadata\collection;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for qtype_essaysimilarity implementing null_provider.
+ * Privacy Subsystem for qtype_essaysimilarity implementing metadata provider
  *
  * @copyright  2023 Atthoriq Adillah Wicaksana (thoriqadillah59@gmail.com)
  * @copyright  based on work by 2018 Gordon Bateson <gordon.bateson@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements \core_privacy\local\metadata\provider {
 
     /**
      * Get the language string identifier with the component's language
@@ -42,7 +44,13 @@ class provider implements \core_privacy\local\metadata\null_provider {
      *
      * @return  string
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection): collection {
+        $collection->add_database_table(
+            'qtype_essaysimilarity_stats',
+            ['userid' => 'privacy:metadata:qtype_essaysimilarity:userid'],
+            'privacy:metadata:qtype_essaysimilarity'
+        );
+
+        return $collection;
     }
 }
